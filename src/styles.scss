@@ -1,0 +1,68 @@
+@use 'primeflex/primeflex.scss';
+@import 'primeicons/primeicons.css';
+
+html {
+	font-size: 16px;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	font-family: Inter, 'Segoe UI', sans-serif;
+	background:
+		radial-gradient(circle at top left, rgba(59, 191, 161, 0.16), transparent 28%),
+		radial-gradient(circle at top right, rgba(24, 27, 42, 0.14), transparent 24%),
+		linear-gradient(180deg, #f5f7fb 0%, #eef2f8 100%);
+	color: #172033;
+}
+
+body.app-dark {
+	background:
+		radial-gradient(circle at top left, rgba(59, 191, 161, 0.18), transparent 26%),
+		linear-gradient(180deg, #0f1728 0%, #111827 100%);
+	color: #f4f7fb;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.app-page {
+	padding: 1rem;
+}
+
+.app-surface {
+	border: 1px solid rgba(23, 32, 51, 0.08);
+	border-radius: 1rem;
+	backdrop-filter: blur(14px);
+	background: rgba(255, 255, 255, 0.84);
+	box-shadow: 0 18px 50px rgba(15, 23, 40, 0.08);
+}
+
+body.app-dark .app-surface {
+	border-color: rgba(255, 255, 255, 0.08);
+	background: rgba(15, 23, 40, 0.78);
+	box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+}
+
+.stat-card .p-card-body,
+.stat-card .p-card-content,
+.glass-card .p-card-body,
+.glass-card .p-card-content {
+	height: 100%;
+}
+
+.p-menubar,
+.p-drawer {
+	border-radius: 0;
+}
+
+.p-component {
+	font-family: inherit;
+}
+/* You can add global styles to this file, and also import other style files */

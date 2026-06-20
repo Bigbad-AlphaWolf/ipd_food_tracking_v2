@@ -1,0 +1,78 @@
+<div class="min-h-screen flex align-items-center justify-content-center p-3">
+  <div class="w-full max-w-3xl">
+    <div class="flex justify-content-end mb-3">
+      <app-language-switcher></app-language-switcher>
+    </div>
+
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="p-4 pb-0">
+          <span class="text-sm text-primary font-semibold">{{ 'auth.registration.eyebrow' | translate }}</span>
+          <h2 class="mt-2 mb-1">{{ 'auth.registration.title' | translate }}</h2>
+          <p class="m-0 text-600">{{ 'auth.registration.subtitle' | translate }}</p>
+        </div>
+      </ng-template>
+
+      <form class="grid" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="col-12 md:col-6 flex flex-column gap-2">
+          <label for="fullName" class="font-medium">{{ 'auth.registration.fullNameLabel' | translate }}</label>
+          <input pInputText id="fullName" formControlName="fullName" [placeholder]="'auth.registration.fullNamePlaceholder' | translate" />
+        </div>
+
+        <div class="col-12 md:col-6 flex flex-column gap-2">
+          <label for="email" class="font-medium">{{ 'auth.registration.emailLabel' | translate }}</label>
+          <input pInputText id="email" type="email" formControlName="email" [placeholder]="'auth.registration.emailPlaceholder' | translate" />
+        </div>
+
+        <div class="col-12 md:col-6 flex flex-column gap-2">
+          <label for="phoneNumber" class="font-medium">{{ 'auth.registration.phoneLabel' | translate }}</label>
+          <input pInputText id="phoneNumber" formControlName="phoneNumber" [placeholder]="'auth.registration.phonePlaceholder' | translate" />
+        </div>
+
+        <div class="col-12 md:col-6 flex flex-column gap-2">
+          <label for="department" class="font-medium">{{ 'auth.registration.departmentLabel' | translate }}</label>
+          <input pInputText id="department" formControlName="department" [placeholder]="'auth.registration.departmentPlaceholder' | translate" />
+        </div>
+
+        <div class="col-12 md:col-6 flex flex-column gap-2">
+          <label for="password" class="font-medium">{{ 'auth.registration.passwordLabel' | translate }}</label>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            [feedback]="true"
+            [toggleMask]="true"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+          ></p-password>
+        </div>
+
+        <div class="col-12 md:col-6 flex flex-column gap-2">
+          <label for="confirmPassword" class="font-medium">{{ 'auth.registration.confirmPasswordLabel' | translate }}</label>
+          <p-password
+            inputId="confirmPassword"
+            formControlName="confirmPassword"
+            [feedback]="false"
+            [toggleMask]="true"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+          ></p-password>
+        </div>
+
+        @if (form.hasError('passwordMismatch') && form.controls.confirmPassword.touched) {
+          <div class="col-12">
+            <small class="text-red-500">{{ 'auth.registration.passwordMismatch' | translate }}</small>
+          </div>
+        }
+
+        <div class="col-12 flex flex-wrap gap-2 pt-2">
+          <button pButton type="submit" [label]="'auth.registration.submit' | translate" [disabled]="form.invalid || loadingService.isLoading()"></button>
+          <a pButton severity="secondary" outlined [label]="'auth.registration.backToLogin' | translate" routerLink="/login"></a>
+        </div>
+      </form>
+    </p-card>
+  </div>
+
+  @if (loadingService.isLoading()) {
+    <app-loading-spinner [overlay]="true"></app-loading-spinner>
+  }
+</div>

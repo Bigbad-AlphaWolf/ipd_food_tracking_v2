@@ -1,0 +1,16 @@
+<div class="language-switcher flex align-items-center gap-2">
+  <span class="text-xs text-500">{{ 'language.label' | translate }}</span>
+  <div class="flex gap-1">
+    @for (language of languages; track language) {
+      <button
+        pButton
+        type="button"
+        size="small"
+        [label]="('language.short.' + language) | translate"
+        [severity]="currentLanguage() === language ? 'help' : 'secondary'"
+        [attr.aria-label]="('language.option.' + language) | translate"
+        (click)="setLanguage(language)"
+      ></button>
+    }
+  </div>
+</div>

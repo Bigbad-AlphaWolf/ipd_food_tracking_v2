@@ -1,0 +1,117 @@
+export type AppRole = 'admin' | 'employee';
+
+export type SurveyStatus = 'draft' | 'open' | 'closed';
+
+export interface Profile {
+  id: string;
+  full_name: string;
+  email: string;
+  phone_number: string | null;
+  department: string | null;
+  role?: AppRole;
+  roles?: AppRole[];
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Meal {
+  id: string;
+  name: string;
+  description: string | null;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface DailySurvey {
+  id: string;
+  survey_date: string;
+  status: SurveyStatus;
+  created_by: string;
+  created_at: string;
+  survey_meals?: SurveyMeal[];
+}
+
+export interface SurveyMeal {
+  id: string;
+  survey_id: string;
+  meal_id: string;
+  meal?: Meal;
+}
+
+export interface Vote {
+  id: string;
+  survey_id: string;
+  user_id: string;
+  meal_id: string;
+  voted_at: string;
+  meal?: Meal;
+  daily_surveys?: DailySurvey;
+}
+
+export interface DashboardKpi {
+  title: string;
+  value: string;
+  hint: string;
+  icon: string;
+}
+
+export interface AdminDashboardMetrics {
+  participationRate: number;
+  totalMealsThisMonth: number;
+  mostPopularMeal: string;
+  votesToday: number;
+  eligibleEmployees: number;
+}
+
+export interface TrendPoint {
+  label: string;
+  value: number;
+}
+
+export interface EmployeeDashboardSummary {
+  hasOpenSurvey: boolean;
+  hasVotedToday: boolean;
+  monthVoteCount: number;
+  lastMealName: string;
+}
+
+export interface EmployeeHistoryRow {
+  id: string;
+  surveyDate: string;
+  mealName: string;
+  votedAt: string;
+  status: SurveyStatus;
+}
+
+export interface TodaySurveyViewModel {
+  survey: DailySurvey | null;
+  selectedMealId: string | null;
+}
+
+export interface MonthlyReportRow {
+  employeeName: string;
+  email: string;
+  department: string;
+  month: string;
+  totalVotes: number;
+  favoriteMeal: string;
+}
+
+export interface SelectOption<T = string> {
+  label: string;
+  value: T;
+}
+
+export interface AppTableColumn {
+  field: string;
+  header: string;
+  type?: 'text' | 'date' | 'datetime' | 'tag' | 'boolean' | 'number';
+}
+
+export interface SurveyUpsertPayload {
+  id?: string;
+  survey_date: string;
+  status: SurveyStatus;
+  mealIds: string[];
+}

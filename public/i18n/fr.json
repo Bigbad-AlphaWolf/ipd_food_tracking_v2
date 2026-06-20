@@ -1,0 +1,81 @@
+{
+  "common": {
+    "appName": "Food Tracker",
+    "user": "Utilisateur",
+    "actions": {
+      "logout": "Se déconnecter"
+    }
+  },
+  "language": {
+    "label": "Langue",
+    "short": {
+      "en": "EN",
+      "fr": "FR"
+    },
+    "option": {
+      "en": "Anglais",
+      "fr": "Français"
+    }
+  },
+  "roles": {
+    "admin": "Administrateur",
+    "employee": "Employé"
+  },
+  "shell": {
+    "subtitle": "Gestion des repas",
+    "navigation": "Navigation",
+    "menu": {
+      "dashboard": "Tableau de bord",
+      "meals": "Repas",
+      "surveys": "Sondages",
+      "users": "Utilisateurs",
+      "reports": "Rapports",
+      "todaySurvey": "Sondage du jour",
+      "history": "Mon historique",
+      "profile": "Profil"
+    }
+  },
+  "auth": {
+    "toast": {
+      "welcomeTitle": "Bon retour",
+      "welcomeBody": "Vous êtes connecté avec succès.",
+      "registrationTitle": "Inscription terminée",
+      "registrationBody": "Votre compte employé a été créé. Vous pouvez maintenant vous connecter."
+    },
+    "login": {
+      "heroTitle": "Le vote quotidien des repas sans la lourdeur des feuilles de calcul.",
+      "heroBody": "Les employés votent une fois par jour. Les administrateurs gèrent les menus, les sondages, les rapports et l'adoption.",
+      "mobileFirstTitle": "Pensé pour le mobile",
+      "mobileFirstBody": "Des parcours de vote rapides optimisés pour les téléphones et les tablettes.",
+      "reportsTitle": "Rapports exploitables",
+      "reportsBody": "Participation, demande par repas et exports mensuels au même endroit.",
+      "secureAccess": "Accès sécurisé",
+      "title": "Connexion",
+      "subtitle": "Utilisez votre adresse e-mail ou votre numéro de téléphone, ainsi que votre mot de passe.",
+      "identifierLabel": "Identifiant",
+      "identifierPlaceholder": "E-mail ou numéro de téléphone",
+      "passwordLabel": "Mot de passe",
+      "submit": "Se connecter",
+      "registerAction": "Nouvel employé ? S'inscrire",
+      "accessNote": "L'accès administrateur et employé est géré via Supabase Auth et les rôles de profil."
+    },
+    "registration": {
+      "eyebrow": "Intégration employé",
+      "title": "S'inscrire comme nouvel employé",
+      "subtitle": "Ce parcours d'inscription crée uniquement un compte employé.",
+      "fullNameLabel": "Nom complet",
+      "fullNamePlaceholder": "Jeanne Dupont",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "jeanne@entreprise.com",
+      "phoneLabel": "Numéro de téléphone",
+      "phonePlaceholder": "+33 6 12 34 56 78",
+      "departmentLabel": "Département",
+      "departmentPlaceholder": "Opérations",
+      "passwordLabel": "Mot de passe",
+      "confirmPasswordLabel": "Confirmer le mot de passe",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "submit": "Créer un compte employé",
+      "backToLogin": "Retour à la connexion"
+    }
+  }
+}

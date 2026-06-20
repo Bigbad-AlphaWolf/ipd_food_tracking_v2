@@ -1,0 +1,81 @@
+{
+  "common": {
+    "appName": "Food Tracker",
+    "user": "User",
+    "actions": {
+      "logout": "Logout"
+    }
+  },
+  "language": {
+    "label": "Language",
+    "short": {
+      "en": "EN",
+      "fr": "FR"
+    },
+    "option": {
+      "en": "English",
+      "fr": "French"
+    }
+  },
+  "roles": {
+    "admin": "Admin",
+    "employee": "Employee"
+  },
+  "shell": {
+    "subtitle": "Meal operations",
+    "navigation": "Navigation",
+    "menu": {
+      "dashboard": "Dashboard",
+      "meals": "Meals",
+      "surveys": "Surveys",
+      "users": "Users",
+      "reports": "Reports",
+      "todaySurvey": "Today's Survey",
+      "history": "My History",
+      "profile": "Profile"
+    }
+  },
+  "auth": {
+    "toast": {
+      "welcomeTitle": "Welcome back",
+      "welcomeBody": "You have been signed in successfully.",
+      "registrationTitle": "Registration complete",
+      "registrationBody": "Your employee account has been created. You can now sign in."
+    },
+    "login": {
+      "heroTitle": "Daily meal voting without the spreadsheet churn.",
+      "heroBody": "Employees vote once per day. Admins manage menus, surveys, reports, and adoption.",
+      "mobileFirstTitle": "Mobile-first",
+      "mobileFirstBody": "Quick voting flows optimized for phones and tablets.",
+      "reportsTitle": "Actionable reports",
+      "reportsBody": "Participation, meal demand, and monthly exports in one place.",
+      "secureAccess": "Secure access",
+      "title": "Sign in",
+      "subtitle": "Use your email address or phone number, plus your password.",
+      "identifierLabel": "Identifier",
+      "identifierPlaceholder": "Email or phone number",
+      "passwordLabel": "Password",
+      "submit": "Sign in",
+      "registerAction": "New employee? Register",
+      "accessNote": "Admin and employee access are handled through Supabase Auth and profile roles."
+    },
+    "registration": {
+      "eyebrow": "Employee onboarding",
+      "title": "Register as a new employee",
+      "subtitle": "This registration flow creates an employee account only.",
+      "fullNameLabel": "Full name",
+      "fullNamePlaceholder": "Jane Doe",
+      "emailLabel": "Email",
+      "emailPlaceholder": "jane@company.com",
+      "phoneLabel": "Phone number",
+      "phonePlaceholder": "+1 555 000 1111",
+      "departmentLabel": "Department",
+      "departmentPlaceholder": "Operations",
+      "passwordLabel": "Password",
+      "confirmPasswordLabel": "Confirm password",
+      "passwordMismatch": "Passwords do not match.",
+      "submit": "Create employee account",
+      "backToLogin": "Back to login"
+    }
+  }
+}

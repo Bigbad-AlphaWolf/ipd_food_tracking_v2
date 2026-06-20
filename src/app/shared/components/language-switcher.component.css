@@ -1,0 +1,14 @@
+:host {
+  display: inline-flex;
+}
+
+.language-switcher {
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+}
+
+:host-context(.app-dark) .language-switcher {
+  background: rgba(15, 23, 40, 0.72);
+}
