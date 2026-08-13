@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { DatePipe, NgClass } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -8,7 +9,7 @@ import { AppTableColumn } from '../../core/models/app.models';
 @Component({
   selector: 'app-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, NgClass, TableModule, TagModule, SkeletonModule],
+  imports: [DatePipe, NgClass, TranslatePipe, TableModule, TagModule, SkeletonModule],
   template: `
     <p-table
       [value]="rows()"
@@ -40,7 +41,7 @@ import { AppTableColumn } from '../../core/models/app.models';
                 }
                 @case ('boolean') {
                   <span [ngClass]="valueOf(row, column.field) ? 'text-green-500' : 'text-500'">
-                    {{ valueOf(row, column.field) ? 'Yes' : 'No' }}
+                    {{ (valueOf(row, column.field) ? 'common.status.yes' : 'common.status.no') | translate }}
                   </span>
                 }
                 @case ('tag') {
@@ -60,7 +61,9 @@ import { AppTableColumn } from '../../core/models/app.models';
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td [attr.colspan]="columns().length" class="text-center py-6 text-500">{{ emptyMessage() }}</td>
+          <td [attr.colspan]="columns().length" class="text-center py-6 text-500">
+            {{ emptyMessage() ?? ('common.table.emptyDefault' | translate) }}
+          </td>
         </tr>
       </ng-template>
     </p-table>
@@ -71,7 +74,7 @@ export class AppTableComponent {
   readonly rows = input<unknown[]>([]);
   readonly loading = input(false);
   readonly dataKey = input('id');
-  readonly emptyMessage = input('No records found.');
+  readonly emptyMessage = input<string | null>(null);
 
   valueOf(row: unknown, field: string): unknown {
     return this.recordOf(row)[field];

@@ -2,8 +2,53 @@
   "common": {
     "appName": "Food Tracker",
     "user": "User",
+    "loading": "Loading...",
     "actions": {
-      "logout": "Logout"
+      "logout": "Logout",
+      "cancel": "Cancel",
+      "save": "Save",
+      "clear": "Clear"
+    },
+    "filters": {
+      "month": "Month",
+      "year": "Year"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "open": "Open",
+      "closed": "Closed",
+      "draft": "Draft",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "placeholders": {
+      "notAvailable": "Not available",
+      "notAssigned": "Not assigned",
+      "unassigned": "Unassigned",
+      "noDescription": "No description",
+      "noData": "No data"
+    },
+    "confirmDelete": {
+      "title": "Confirm deletion",
+      "defaultMessage": "This action cannot be undone."
+    },
+    "table": {
+      "emptyDefault": "No records found."
+    },
+    "months": {
+      "1": "January",
+      "2": "February",
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June",
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
     }
   },
   "language": {
@@ -76,6 +121,215 @@
       "passwordMismatch": "Passwords do not match.",
       "submit": "Create employee account",
       "backToLogin": "Back to login"
+    }
+  },
+  "admin": {
+    "eyebrow": "Admin",
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Participation, consumption, and trend monitoring across the current month.",
+      "badge": "KPIs",
+      "participationTitle": "Participation",
+      "participationBody": "{{rate}}% today ({{votes}}/{{eligible}})",
+      "monthlyMealsTitle": "Monthly meals",
+      "monthlyMealsBody": "{{count}} meals consumed this month.",
+      "topMealTitle": "Top meal",
+      "reportHealthTitle": "Report health",
+      "reportHealthBody": "Exports are driven by the monthly report SQL function.",
+      "monthlyTrendTitle": "Monthly trend",
+      "chartVotesLabel": "Votes",
+      "toast": {
+        "unavailableTitle": "Dashboard unavailable",
+        "unavailableBody": "Unable to load admin metrics."
+      }
+    },
+    "meals": {
+      "title": "Meals Management",
+      "subtitle": "Create, edit, activate, and retire meal options.",
+      "newMeal": "New meal",
+      "table": {
+        "name": "Name",
+        "description": "Description",
+        "status": "Status",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "deleteConfirm": "Delete this meal? Existing survey relations should be cleaned up first.",
+      "dialog": {
+        "header": "Meal",
+        "nameLabel": "Name",
+        "descriptionLabel": "Description",
+        "activeLabel": "Active meal"
+      },
+      "toast": {
+        "savedTitle": "Meal saved",
+        "savedBody": "The meal catalog has been updated.",
+        "saveFailedTitle": "Save failed",
+        "saveFailedBody": "Unable to save this meal.",
+        "deletedTitle": "Meal deleted",
+        "deletedBody": "The meal has been removed.",
+        "deleteFailedTitle": "Delete failed",
+        "deleteFailedBody": "Unable to delete this meal.",
+        "unavailableTitle": "Meals unavailable",
+        "unavailableBody": "Unable to load the meal catalog."
+      }
+    },
+    "surveys": {
+      "title": "Surveys Management",
+      "subtitle": "Build date-based surveys, assign meals, and change status.",
+      "newSurvey": "New survey",
+      "table": {
+        "date": "Date",
+        "status": "Status",
+        "meals": "Meals",
+        "actions": "Actions"
+      },
+      "noMealsAssigned": "No meals assigned",
+      "deleteConfirm": "Delete this survey and all related meal mappings?",
+      "dialog": {
+        "header": "Survey",
+        "dateLabel": "Survey date",
+        "statusLabel": "Status",
+        "mealsLabel": "Meals"
+      },
+      "toast": {
+        "updatedTitle": "Survey updated",
+        "updatedBody": "Survey marked as {{status}}.",
+        "savedTitle": "Survey saved",
+        "savedBody": "Survey scheduling has been updated.",
+        "saveFailedTitle": "Save failed",
+        "saveFailedBody": "Unable to save this survey.",
+        "deletedTitle": "Survey deleted",
+        "deletedBody": "The survey has been removed.",
+        "deleteFailedTitle": "Delete failed",
+        "deleteFailedBody": "Unable to delete this survey.",
+        "statusUpdateFailedTitle": "Status update failed",
+        "statusUpdateFailedBody": "Unable to update the survey status.",
+        "unavailableTitle": "Surveys unavailable",
+        "unavailableBody": "Unable to load survey configuration."
+      }
+    },
+    "users": {
+      "title": "Users Management",
+      "subtitle": "Role assignment and account activation state.",
+      "searchPlaceholder": "Search employees",
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "department": "Department",
+        "role": "Role",
+        "status": "Status",
+        "action": "Action"
+      },
+      "dialog": {
+        "header": "User access",
+        "nameLabel": "Name",
+        "rolesLabel": "Roles",
+        "activeAccountLabel": "Active account"
+      },
+      "toast": {
+        "updatedTitle": "User updated",
+        "updatedBody": "Roles and activation state were saved.",
+        "updateFailedTitle": "Update failed",
+        "updateFailedBody": "Unable to update user access.",
+        "unavailableTitle": "Users unavailable",
+        "unavailableBody": "Unable to load user roles."
+      }
+    },
+    "reports": {
+      "title": "Reports",
+      "subtitle": "Monthly employee meal consumption with exports.",
+      "badge": "CSV + Excel",
+      "searchPlaceholder": "Search employee",
+      "exportCsv": "Export CSV",
+      "exportExcel": "Export Excel",
+      "table": {
+        "employee": "Employee",
+        "email": "Email",
+        "department": "Department",
+        "month": "Month",
+        "totalVotes": "Total Votes",
+        "favoriteMeal": "Favorite Meal"
+      },
+      "emptyMessage": "No report rows found for the selected period.",
+      "toast": {
+        "unavailableTitle": "Report unavailable",
+        "unavailableBody": "Unable to load the monthly report."
+      }
+    }
+  },
+  "employee": {
+    "eyebrow": "Employee",
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Your meal voting activity and today's action items.",
+      "badge": "Live",
+      "todaySurveyTitle": "Today's survey",
+      "hasOpenSurvey": "A survey is available for voting.",
+      "noOpenSurvey": "No open survey for today.",
+      "monthTitle": "This month",
+      "monthBody": "{{count}} meals selected so far.",
+      "lastMealTitle": "Last selected meal",
+      "noMealYet": "No meal yet",
+      "statusTitle": "Status",
+      "votedToday": "Today's vote is already locked in.",
+      "canVote": "You can still vote today.",
+      "quickActionsTitle": "Quick actions",
+      "quickActionsBody": "Jump into voting or inspect your monthly history.",
+      "openSurveyAction": "Open today's survey",
+      "viewHistoryAction": "View my history",
+      "toast": {
+        "unavailableTitle": "Dashboard unavailable",
+        "unavailableBody": "Unable to load your employee dashboard."
+      }
+    },
+    "todaySurvey": {
+      "title": "Today's Survey",
+      "subtitle": "Open surveys appear here with meal choices and vote status.",
+      "badge": "Single vote",
+      "loading": "Loading today's survey...",
+      "emptyTitle": "No survey today",
+      "emptyMessage": "There is no open survey for today yet.",
+      "noDescription": "No description provided.",
+      "selectedTag": "Selected",
+      "chooseMeal": "Choose meal",
+      "submitSectionTitle": "Submit your vote",
+      "votedNote": "Your vote has been recorded for today.",
+      "notVotedNote": "Once submitted, the vote is locked for the day.",
+      "submitVote": "Submit vote",
+      "toast": {
+        "votedTitle": "Vote recorded",
+        "votedBody": "Your meal choice has been saved for today.",
+        "voteFailedTitle": "Vote failed",
+        "voteFailedBody": "Unable to submit your vote. If you already voted, the record remains unchanged.",
+        "unavailableTitle": "Survey unavailable",
+        "unavailableBody": "Unable to load today's survey."
+      }
+    },
+    "history": {
+      "title": "My History",
+      "subtitle": "Monthly voting history with searchable meal records.",
+      "badge": "By month",
+      "searchPlaceholder": "Search by meal name",
+      "table": {
+        "surveyDate": "Survey Date",
+        "meal": "Meal",
+        "votedAt": "Voted At",
+        "status": "Status"
+      },
+      "emptyMessage": "No meal history found for the selected month.",
+      "toast": {
+        "unavailableTitle": "History unavailable",
+        "unavailableBody": "Unable to load your meal history."
+      }
+    },
+    "profile": {
+      "eyebrow": "Account",
+      "title": "Profile",
+      "subtitle": "Your profile metadata comes from the Supabase profiles table.",
+      "fullNameLabel": "Full name",
+      "emailLabel": "Email",
+      "departmentLabel": "Department"
     }
   }
 }

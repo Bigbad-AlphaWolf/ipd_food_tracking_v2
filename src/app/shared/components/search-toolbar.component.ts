@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -8,7 +9,7 @@ import { SelectOption } from '../../core/models/app.models';
 @Component({
   selector: 'app-search-toolbar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, ButtonModule, InputTextModule, SelectModule],
+  imports: [FormsModule, TranslatePipe, ButtonModule, InputTextModule, SelectModule],
   template: `
     <div class="app-surface p-3 mb-4">
       <div class="grid align-items-end">
@@ -33,7 +34,7 @@ import { SelectOption } from '../../core/models/app.models';
               optionValue="value"
               [ngModel]="month()"
               (ngModelChange)="monthChange.emit($event)"
-              placeholder="Month"
+              [placeholder]="'common.filters.month' | translate"
               class="w-full"
             ></p-select>
           </div>
@@ -47,14 +48,14 @@ import { SelectOption } from '../../core/models/app.models';
               optionValue="value"
               [ngModel]="year()"
               (ngModelChange)="yearChange.emit($event)"
-              placeholder="Year"
+              [placeholder]="'common.filters.year' | translate"
               class="w-full"
             ></p-select>
           </div>
         }
 
         <div class="col-12 md:col-2 flex md:justify-content-end">
-          <button pButton type="button" label="Clear" severity="secondary" outlined (click)="clear.emit()"></button>
+          <button pButton type="button" [label]="'common.actions.clear' | translate" severity="secondary" outlined (click)="clear.emit()"></button>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -11,13 +12,13 @@ import { EmployeeDashboardSummary } from '../../core/models/app.models';
 @Component({
   selector: 'app-employee-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardModule, ButtonModule, SkeletonModule, RouterLink, PageHeaderComponent],
+  imports: [TranslatePipe, CardModule, ButtonModule, SkeletonModule, RouterLink, PageHeaderComponent],
   template: `
     <app-page-header
-      eyebrow="Employee"
-      title="Dashboard"
-      subtitle="Your meal voting activity and today's action items."
-      badge="Live"
+      [eyebrow]="'employee.eyebrow' | translate"
+      [title]="'employee.dashboard.title' | translate"
+      [subtitle]="'employee.dashboard.subtitle' | translate"
+      [badge]="'employee.dashboard.badge' | translate"
     ></app-page-header>
 
     <div class="grid">
@@ -27,8 +28,10 @@ import { EmployeeDashboardSummary } from '../../core/models/app.models';
             <p-skeleton width="8rem" height="1.5rem"></p-skeleton>
             <p-skeleton width="100%" height="3rem" styleClass="mt-3"></p-skeleton>
           } @else {
-            <h3>Today's survey</h3>
-            <p class="text-600">{{ summary().hasOpenSurvey ? 'A survey is available for voting.' : 'No open survey for today.' }}</p>
+            <h3>{{ 'employee.dashboard.todaySurveyTitle' | translate }}</h3>
+            <p class="text-600">
+              {{ (summary().hasOpenSurvey ? 'employee.dashboard.hasOpenSurvey' : 'employee.dashboard.noOpenSurvey') | translate }}
+            </p>
           }
         </p-card>
       </div>
@@ -38,8 +41,8 @@ import { EmployeeDashboardSummary } from '../../core/models/app.models';
             <p-skeleton width="8rem" height="1.5rem"></p-skeleton>
             <p-skeleton width="6rem" height="2rem" styleClass="mt-3"></p-skeleton>
           } @else {
-            <h3>This month</h3>
-            <p class="text-600">{{ summary().monthVoteCount }} meals selected so far.</p>
+            <h3>{{ 'employee.dashboard.monthTitle' | translate }}</h3>
+            <p class="text-600">{{ 'employee.dashboard.monthBody' | translate: { count: summary().monthVoteCount } }}</p>
           }
         </p-card>
       </div>
@@ -49,7 +52,7 @@ import { EmployeeDashboardSummary } from '../../core/models/app.models';
             <p-skeleton width="8rem" height="1.5rem"></p-skeleton>
             <p-skeleton width="100%" height="3rem" styleClass="mt-3"></p-skeleton>
           } @else {
-            <h3>Last selected meal</h3>
+            <h3>{{ 'employee.dashboard.lastMealTitle' | translate }}</h3>
             <p class="text-600">{{ summary().lastMealName }}</p>
           }
         </p-card>
@@ -60,8 +63,8 @@ import { EmployeeDashboardSummary } from '../../core/models/app.models';
             <p-skeleton width="8rem" height="1.5rem"></p-skeleton>
             <p-skeleton width="100%" height="3rem" styleClass="mt-3"></p-skeleton>
           } @else {
-            <h3>Status</h3>
-            <p class="text-600">{{ summary().hasVotedToday ? "Today's vote is already locked in." : "You can still vote today." }}</p>
+            <h3>{{ 'employee.dashboard.statusTitle' | translate }}</h3>
+            <p class="text-600">{{ (summary().hasVotedToday ? 'employee.dashboard.votedToday' : 'employee.dashboard.canVote') | translate }}</p>
           }
         </p-card>
       </div>
@@ -69,12 +72,12 @@ import { EmployeeDashboardSummary } from '../../core/models/app.models';
         <p-card>
           <div class="flex flex-column gap-3 md:flex-row md:justify-content-between md:align-items-center">
             <div>
-              <h3 class="mt-0 mb-2">Quick actions</h3>
-              <p class="m-0 text-600">Jump into voting or inspect your monthly history.</p>
+              <h3 class="mt-0 mb-2">{{ 'employee.dashboard.quickActionsTitle' | translate }}</h3>
+              <p class="m-0 text-600">{{ 'employee.dashboard.quickActionsBody' | translate }}</p>
             </div>
             <div class="flex gap-2 flex-wrap">
-              <a pButton routerLink="/employee/today-survey" label="Open today's survey"></a>
-              <a pButton routerLink="/employee/history" severity="secondary" outlined label="View my history"></a>
+              <a pButton routerLink="/employee/today-survey" [label]="'employee.dashboard.openSurveyAction' | translate"></a>
+              <a pButton routerLink="/employee/history" severity="secondary" outlined [label]="'employee.dashboard.viewHistoryAction' | translate"></a>
             </div>
           </div>
         </p-card>
@@ -85,13 +88,14 @@ import { EmployeeDashboardSummary } from '../../core/models/app.models';
 export class EmployeeDashboardComponent {
   private readonly employeeService = inject(EmployeeService);
   private readonly toastService = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly loading = signal(true);
   readonly summary = signal<EmployeeDashboardSummary>({
     hasOpenSurvey: false,
     hasVotedToday: false,
     monthVoteCount: 0,
-    lastMealName: 'No meal yet'
+    lastMealName: this.translateService.instant('employee.dashboard.noMealYet')
   });
 
   constructor() {
@@ -104,11 +108,12 @@ export class EmployeeDashboardComponent {
     try {
       const now = new Date();
       this.summary.set(await this.employeeService.getDashboardSummary(now.getMonth() + 1, now.getFullYear()));
-      console.log(this.summary());
-
     } catch (error) {
       console.error(error);
-      this.toastService.error('Dashboard unavailable', 'Unable to load your employee dashboard.');
+      this.toastService.error(
+        this.translateService.instant('employee.dashboard.toast.unavailableTitle'),
+        this.translateService.instant('employee.dashboard.toast.unavailableBody')
+      );
     } finally {
       this.loading.set(false);
     }

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { SearchToolbarComponent } from '../../shared/components/search-toolbar.component';
@@ -10,13 +11,13 @@ import { AppTableColumn, MonthlyReportRow, SelectOption } from '../../core/model
 @Component({
   selector: 'app-reports',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonModule, PageHeaderComponent, SearchToolbarComponent, AppTableComponent],
+  imports: [TranslatePipe, ButtonModule, PageHeaderComponent, SearchToolbarComponent, AppTableComponent],
   template: `
     <app-page-header
-      eyebrow="Admin"
-      title="Reports"
-      subtitle="Monthly employee meal consumption with exports."
-      badge="CSV + Excel"
+      [eyebrow]="'admin.eyebrow' | translate"
+      [title]="'admin.reports.title' | translate"
+      [subtitle]="'admin.reports.subtitle' | translate"
+      [badge]="'admin.reports.badge' | translate"
     ></app-page-header>
 
     <app-search-toolbar
@@ -25,9 +26,9 @@ import { AppTableColumn, MonthlyReportRow, SelectOption } from '../../core/model
       [showYear]="true"
       [month]="month()"
       [year]="year()"
-      [monthOptions]="monthOptions"
+      [monthOptions]="monthOptions()"
       [yearOptions]="yearOptions"
-      searchPlaceholder="Search employee"
+      [searchPlaceholder]="'admin.reports.searchPlaceholder' | translate"
       (searchChange)="search.set($event)"
       (monthChange)="setMonth($event)"
       (yearChange)="setYear($event)"
@@ -35,16 +36,33 @@ import { AppTableColumn, MonthlyReportRow, SelectOption } from '../../core/model
     ></app-search-toolbar>
 
     <div class="flex justify-content-end gap-2 mb-3 flex-wrap">
-      <button pButton type="button" icon="pi pi-file-export" label="Export CSV" severity="secondary" outlined [disabled]="rows().length === 0" (click)="exportCsv()"></button>
-      <button pButton type="button" icon="pi pi-file-excel" label="Export Excel" [disabled]="rows().length === 0" (click)="exportExcel()"></button>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-file-export"
+        [label]="'admin.reports.exportCsv' | translate"
+        severity="secondary"
+        outlined
+        [disabled]="rows().length === 0"
+        (click)="exportCsv()"
+      ></button>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-file-excel"
+        [label]="'admin.reports.exportExcel' | translate"
+        [disabled]="rows().length === 0"
+        (click)="exportExcel()"
+      ></button>
     </div>
 
-    <app-table [columns]="columns" [rows]="tableRows()" [loading]="loading()" emptyMessage="No report rows found for the selected period."></app-table>
+    <app-table [columns]="columns()" [rows]="tableRows()" [loading]="loading()" [emptyMessage]="'admin.reports.emptyMessage' | translate"></app-table>
   `
 })
 export class ReportsComponent {
   private readonly adminService = inject(AdminService);
   private readonly toastService = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly loading = signal(false);
   readonly search = signal('');
@@ -52,29 +70,25 @@ export class ReportsComponent {
   readonly year = signal(new Date().getFullYear());
   readonly rows = signal<MonthlyReportRow[]>([]);
 
-  readonly columns: AppTableColumn[] = [
-    { field: 'employeeName', header: 'Employee' },
-    { field: 'email', header: 'Email' },
-    { field: 'department', header: 'Department' },
-    { field: 'month', header: 'Month' },
-    { field: 'totalVotes', header: 'Total Votes', type: 'number' },
-    { field: 'favoriteMeal', header: 'Favorite Meal' }
-  ];
+  readonly columns = computed<AppTableColumn[]>(() => {
+    this.translateService.currentLang();
+    return [
+      { field: 'employeeName', header: this.translateService.instant('admin.reports.table.employee') },
+      { field: 'email', header: this.translateService.instant('admin.reports.table.email') },
+      { field: 'department', header: this.translateService.instant('admin.reports.table.department') },
+      { field: 'month', header: this.translateService.instant('admin.reports.table.month') },
+      { field: 'totalVotes', header: this.translateService.instant('admin.reports.table.totalVotes'), type: 'number' },
+      { field: 'favoriteMeal', header: this.translateService.instant('admin.reports.table.favoriteMeal') }
+    ];
+  });
 
-  readonly monthOptions: SelectOption<number>[] = [
-    { label: 'January', value: 1 },
-    { label: 'February', value: 2 },
-    { label: 'March', value: 3 },
-    { label: 'April', value: 4 },
-    { label: 'May', value: 5 },
-    { label: 'June', value: 6 },
-    { label: 'July', value: 7 },
-    { label: 'August', value: 8 },
-    { label: 'September', value: 9 },
-    { label: 'October', value: 10 },
-    { label: 'November', value: 11 },
-    { label: 'December', value: 12 }
-  ];
+  readonly monthOptions = computed<SelectOption<number>[]>(() => {
+    this.translateService.currentLang();
+    return Array.from({ length: 12 }, (_, index) => {
+      const value = index + 1;
+      return { label: this.translateService.instant(`common.months.${value}`), value };
+    });
+  });
 
   readonly yearOptions: SelectOption<number>[] = Array.from({ length: 5 }, (_, index) => {
     const value = new Date().getFullYear() - index;
@@ -128,7 +142,10 @@ export class ReportsComponent {
       this.rows.set(await this.adminService.getMonthlyReport(this.month(), this.year(), this.search()));
     } catch (error) {
       console.error(error);
-      this.toastService.error('Report unavailable', 'Unable to load the monthly report.');
+      this.toastService.error(
+        this.translateService.instant('admin.reports.toast.unavailableTitle'),
+        this.translateService.instant('admin.reports.toast.unavailableBody')
+      );
     } finally {
       this.loading.set(false);
     }

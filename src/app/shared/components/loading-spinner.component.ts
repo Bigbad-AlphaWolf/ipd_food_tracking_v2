@@ -1,12 +1,13 @@
 import { Component, input } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-loading-spinner',
-  imports: [ProgressSpinnerModule],
+  imports: [ProgressSpinnerModule, TranslatePipe],
   template: `
     <div class="loading-wrapper" [class.loading-overlay]="overlay()">
-      <p-progressSpinner ariaLabel="Loading"></p-progressSpinner>
+      <p-progressSpinner [ariaLabel]="'common.loading' | translate"></p-progressSpinner>
     </div>
   `,
   styles: [

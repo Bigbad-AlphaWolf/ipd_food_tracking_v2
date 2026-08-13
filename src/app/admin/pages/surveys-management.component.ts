@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
@@ -20,6 +21,7 @@ import { DailySurvey, Meal, SelectOption } from '../../core/models/app.models';
   imports: [
     DatePipe,
     ReactiveFormsModule,
+    TranslatePipe,
     PageHeaderComponent,
     TableModule,
     DialogModule,
@@ -32,36 +34,41 @@ import { DailySurvey, Meal, SelectOption } from '../../core/models/app.models';
   ],
   template: `
     <app-page-header
-      eyebrow="Admin"
-      title="Surveys Management"
-      subtitle="Build date-based surveys, assign meals, and change status."
+      [eyebrow]="'admin.eyebrow' | translate"
+      [title]="'admin.surveys.title' | translate"
+      [subtitle]="'admin.surveys.subtitle' | translate"
     ></app-page-header>
 
     <div class="flex justify-content-end mb-3">
-      <button pButton type="button" label="New survey" icon="pi pi-plus" (click)="openCreate()"></button>
+      <button pButton type="button" [label]="'admin.surveys.newSurvey' | translate" icon="pi pi-plus" (click)="openCreate()"></button>
     </div>
 
     <p-table [value]="surveys()" [loading]="loading()" responsiveLayout="scroll" dataKey="id" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th>Date</th>
-          <th>Status</th>
-          <th>Meals</th>
-          <th class="w-12rem">Actions</th>
+          <th>{{ 'admin.surveys.table.date' | translate }}</th>
+          <th>{{ 'admin.surveys.table.status' | translate }}</th>
+          <th>{{ 'admin.surveys.table.meals' | translate }}</th>
+          <th class="w-12rem">{{ 'admin.surveys.table.actions' | translate }}</th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" let-survey>
         <tr>
           <td>{{ survey.survey_date | date: 'mediumDate' }}</td>
-          <td><p-tag [value]="survey.status" [severity]="survey.status === 'open' ? 'success' : survey.status === 'closed' ? 'danger' : 'warn'"></p-tag></td>
+          <td>
+            <p-tag
+              [value]="('common.status.' + survey.status) | translate"
+              [severity]="survey.status === 'open' ? 'success' : survey.status === 'closed' ? 'danger' : 'warn'"
+            ></p-tag>
+          </td>
           <td>{{ mealNames(survey) }}</td>
           <td>
             <div class="flex align-items-center gap-1 flex-wrap">
               <button pButton type="button" icon="pi pi-pencil" text rounded (click)="openEdit(survey)"></button>
               <button pButton type="button" icon="pi pi-lock-open" text rounded [disabled]="survey.status === 'open'" (click)="changeStatus(survey, 'open')"></button>
               <button pButton type="button" icon="pi pi-lock" text rounded [disabled]="survey.status === 'closed'" (click)="changeStatus(survey, 'closed')"></button>
-              <app-confirm-delete message="Delete this survey and all related meal mappings?" (confirmed)="deleteSurvey(survey.id)"></app-confirm-delete>
+              <app-confirm-delete [message]="'admin.surveys.deleteConfirm' | translate" (confirmed)="deleteSurvey(survey.id)"></app-confirm-delete>
             </div>
           </td>
         </tr>
@@ -69,7 +76,7 @@ import { DailySurvey, Meal, SelectOption } from '../../core/models/app.models';
     </p-table>
 
     <p-dialog
-      header="Survey"
+      [header]="'admin.surveys.dialog.header' | translate"
       [visible]="dialogVisible()"
       (visibleChange)="dialogVisible.set($event)"
       [modal]="true"
@@ -78,17 +85,17 @@ import { DailySurvey, Meal, SelectOption } from '../../core/models/app.models';
       <form class="flex flex-column gap-4" [formGroup]="form">
         <div class="grid">
           <div class="col-12 md:col-6 flex flex-column gap-2">
-            <label for="survey-date">Survey date</label>
+            <label for="survey-date">{{ 'admin.surveys.dialog.dateLabel' | translate }}</label>
             <p-datepicker inputId="survey-date" formControlName="surveyDate" [showIcon]="true" appendTo="body"></p-datepicker>
           </div>
           <div class="col-12 md:col-6 flex flex-column gap-2">
-            <label for="survey-status">Status</label>
-            <p-select inputId="survey-status" [options]="statusOptions" optionLabel="label" optionValue="value" formControlName="status"></p-select>
+            <label for="survey-status">{{ 'admin.surveys.dialog.statusLabel' | translate }}</label>
+            <p-select inputId="survey-status" [options]="statusOptions()" optionLabel="label" optionValue="value" formControlName="status"></p-select>
           </div>
         </div>
 
         <div class="flex flex-column gap-2">
-          <label for="survey-meals">Meals</label>
+          <label for="survey-meals">{{ 'admin.surveys.dialog.mealsLabel' | translate }}</label>
           <p-multiSelect
             inputId="survey-meals"
             [options]="mealOptions()"
@@ -102,8 +109,8 @@ import { DailySurvey, Meal, SelectOption } from '../../core/models/app.models';
       </form>
 
       <ng-template pTemplate="footer">
-        <button pButton type="button" label="Cancel" severity="secondary" outlined (click)="dialogVisible.set(false)"></button>
-        <button pButton type="button" label="Save" [disabled]="form.invalid || saving()" (click)="save()"></button>
+        <button pButton type="button" [label]="'common.actions.cancel' | translate" severity="secondary" outlined (click)="dialogVisible.set(false)"></button>
+        <button pButton type="button" [label]="'common.actions.save' | translate" [disabled]="form.invalid || saving()" (click)="save()"></button>
       </ng-template>
     </p-dialog>
   `
@@ -112,6 +119,7 @@ export class SurveysManagementComponent {
   private readonly fb = inject(FormBuilder);
   private readonly adminService = inject(AdminService);
   private readonly toastService = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly loading = signal(false);
   readonly saving = signal(false);
@@ -120,11 +128,14 @@ export class SurveysManagementComponent {
   readonly meals = signal<Meal[]>([]);
   readonly editingId = signal<string | null>(null);
 
-  readonly statusOptions: SelectOption<DailySurvey['status']>[] = [
-    { label: 'Draft', value: 'draft' },
-    { label: 'Open', value: 'open' },
-    { label: 'Closed', value: 'closed' }
-  ];
+  readonly statusOptions = computed<SelectOption<DailySurvey['status']>[]>(() => {
+    this.translateService.currentLang();
+    return [
+      { label: this.translateService.instant('common.status.draft'), value: 'draft' },
+      { label: this.translateService.instant('common.status.open'), value: 'open' },
+      { label: this.translateService.instant('common.status.closed'), value: 'closed' }
+    ];
+  });
 
   readonly form = this.fb.nonNullable.group({
     surveyDate: [new Date(), Validators.required],
@@ -141,7 +152,10 @@ export class SurveysManagementComponent {
   }
 
   mealNames(survey: DailySurvey): string {
-    return survey.survey_meals?.map((item) => item.meal?.name).filter(Boolean).join(', ') || 'No meals assigned';
+    return (
+      survey.survey_meals?.map((item) => item.meal?.name).filter(Boolean).join(', ') ||
+      this.translateService.instant('admin.surveys.noMealsAssigned')
+    );
   }
 
   openCreate(): void {
@@ -168,11 +182,17 @@ export class SurveysManagementComponent {
         status,
         mealIds: survey.survey_meals?.map((item) => item.meal_id) ?? []
       });
-      this.toastService.success('Survey updated', `Survey marked as ${status}.`);
+      this.toastService.success(
+        this.translateService.instant('admin.surveys.toast.updatedTitle'),
+        this.translateService.instant('admin.surveys.toast.updatedBody', { status: this.translateService.instant(`common.status.${status}`) })
+      );
       await this.load();
     } catch (error) {
       console.error(error);
-      this.toastService.error('Status update failed', 'Unable to update the survey status.');
+      this.toastService.error(
+        this.translateService.instant('admin.surveys.toast.statusUpdateFailedTitle'),
+        this.translateService.instant('admin.surveys.toast.statusUpdateFailedBody')
+      );
     }
   }
 
@@ -192,12 +212,18 @@ export class SurveysManagementComponent {
         status: value.status,
         mealIds: value.mealIds
       });
-      this.toastService.success('Survey saved', 'Survey scheduling has been updated.');
+      this.toastService.success(
+        this.translateService.instant('admin.surveys.toast.savedTitle'),
+        this.translateService.instant('admin.surveys.toast.savedBody')
+      );
       this.dialogVisible.set(false);
       await this.load();
     } catch (error) {
       console.error(error);
-      this.toastService.error('Save failed', 'Unable to save this survey.');
+      this.toastService.error(
+        this.translateService.instant('admin.surveys.toast.saveFailedTitle'),
+        this.translateService.instant('admin.surveys.toast.saveFailedBody')
+      );
     } finally {
       this.saving.set(false);
     }
@@ -206,11 +232,17 @@ export class SurveysManagementComponent {
   async deleteSurvey(id: string): Promise<void> {
     try {
       await this.adminService.deleteSurvey(id);
-      this.toastService.success('Survey deleted', 'The survey has been removed.');
+      this.toastService.success(
+        this.translateService.instant('admin.surveys.toast.deletedTitle'),
+        this.translateService.instant('admin.surveys.toast.deletedBody')
+      );
       await this.load();
     } catch (error) {
       console.error(error);
-      this.toastService.error('Delete failed', 'Unable to delete this survey.');
+      this.toastService.error(
+        this.translateService.instant('admin.surveys.toast.deleteFailedTitle'),
+        this.translateService.instant('admin.surveys.toast.deleteFailedBody')
+      );
     }
   }
 
@@ -223,7 +255,10 @@ export class SurveysManagementComponent {
       this.meals.set(meals.filter((meal) => meal.is_active));
     } catch (error) {
       console.error(error);
-      this.toastService.error('Surveys unavailable', 'Unable to load survey configuration.');
+      this.toastService.error(
+        this.translateService.instant('admin.surveys.toast.unavailableTitle'),
+        this.translateService.instant('admin.surveys.toast.unavailableBody')
+      );
     } finally {
       this.loading.set(false);
     }
