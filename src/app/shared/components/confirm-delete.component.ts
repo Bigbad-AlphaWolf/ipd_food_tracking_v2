@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 
@@ -12,15 +13,16 @@ import { ButtonModule } from 'primeng/button';
 })
 export class ConfirmDeleteComponent {
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly translateService = inject(TranslateService);
 
-  readonly header = input('Confirm deletion');
-  readonly message = input('This action cannot be undone.');
+  readonly header = input<string | null>(null);
+  readonly message = input<string | null>(null);
   readonly confirmed = output<void>();
 
   confirm(): void {
     this.confirmationService.confirm({
-      header: this.header(),
-      message: this.message(),
+      header: this.header() ?? this.translateService.instant('common.confirmDelete.title'),
+      message: this.message() ?? this.translateService.instant('common.confirmDelete.defaultMessage'),
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => this.confirmed.emit()
     });

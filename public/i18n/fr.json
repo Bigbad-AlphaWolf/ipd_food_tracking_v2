@@ -2,8 +2,53 @@
   "common": {
     "appName": "Food Tracker",
     "user": "Utilisateur",
+    "loading": "Chargement...",
     "actions": {
-      "logout": "Se déconnecter"
+      "logout": "Se déconnecter",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "clear": "Effacer"
+    },
+    "filters": {
+      "month": "Mois",
+      "year": "Année"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "open": "Ouvert",
+      "closed": "Fermé",
+      "draft": "Brouillon",
+      "yes": "Oui",
+      "no": "Non"
+    },
+    "placeholders": {
+      "notAvailable": "Non disponible",
+      "notAssigned": "Non assigné",
+      "unassigned": "Non assigné",
+      "noDescription": "Aucune description",
+      "noData": "Aucune donnée"
+    },
+    "confirmDelete": {
+      "title": "Confirmer la suppression",
+      "defaultMessage": "Cette action est irréversible."
+    },
+    "table": {
+      "emptyDefault": "Aucun enregistrement trouvé."
+    },
+    "months": {
+      "1": "Janvier",
+      "2": "Février",
+      "3": "Mars",
+      "4": "Avril",
+      "5": "Mai",
+      "6": "Juin",
+      "7": "Juillet",
+      "8": "Août",
+      "9": "Septembre",
+      "10": "Octobre",
+      "11": "Novembre",
+      "12": "Décembre"
     }
   },
   "language": {
@@ -76,6 +121,215 @@
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "submit": "Créer un compte employé",
       "backToLogin": "Retour à la connexion"
+    }
+  },
+  "admin": {
+    "eyebrow": "Administration",
+    "dashboard": {
+      "title": "Tableau de bord",
+      "subtitle": "Suivi de la participation, de la consommation et des tendances du mois en cours.",
+      "badge": "KPI",
+      "participationTitle": "Participation",
+      "participationBody": "{{rate}} % aujourd'hui ({{votes}}/{{eligible}})",
+      "monthlyMealsTitle": "Repas du mois",
+      "monthlyMealsBody": "{{count}} repas consommés ce mois-ci.",
+      "topMealTitle": "Repas le plus populaire",
+      "reportHealthTitle": "État des rapports",
+      "reportHealthBody": "Les exports sont générés par la fonction SQL de rapport mensuel.",
+      "monthlyTrendTitle": "Tendance mensuelle",
+      "chartVotesLabel": "Votes",
+      "toast": {
+        "unavailableTitle": "Tableau de bord indisponible",
+        "unavailableBody": "Impossible de charger les indicateurs d'administration."
+      }
+    },
+    "meals": {
+      "title": "Gestion des repas",
+      "subtitle": "Créez, modifiez, activez et retirez des repas.",
+      "newMeal": "Nouveau repas",
+      "table": {
+        "name": "Nom",
+        "description": "Description",
+        "status": "Statut",
+        "created": "Créé le",
+        "actions": "Actions"
+      },
+      "deleteConfirm": "Supprimer ce repas ? Les relations de sondage existantes doivent d'abord être nettoyées.",
+      "dialog": {
+        "header": "Repas",
+        "nameLabel": "Nom",
+        "descriptionLabel": "Description",
+        "activeLabel": "Repas actif"
+      },
+      "toast": {
+        "savedTitle": "Repas enregistré",
+        "savedBody": "Le catalogue de repas a été mis à jour.",
+        "saveFailedTitle": "Échec de l'enregistrement",
+        "saveFailedBody": "Impossible d'enregistrer ce repas.",
+        "deletedTitle": "Repas supprimé",
+        "deletedBody": "Le repas a été retiré.",
+        "deleteFailedTitle": "Échec de la suppression",
+        "deleteFailedBody": "Impossible de supprimer ce repas.",
+        "unavailableTitle": "Repas indisponibles",
+        "unavailableBody": "Impossible de charger le catalogue de repas."
+      }
+    },
+    "surveys": {
+      "title": "Gestion des sondages",
+      "subtitle": "Créez des sondages datés, associez des repas et changez leur statut.",
+      "newSurvey": "Nouveau sondage",
+      "table": {
+        "date": "Date",
+        "status": "Statut",
+        "meals": "Repas",
+        "actions": "Actions"
+      },
+      "noMealsAssigned": "Aucun repas assigné",
+      "deleteConfirm": "Supprimer ce sondage et toutes les associations de repas correspondantes ?",
+      "dialog": {
+        "header": "Sondage",
+        "dateLabel": "Date du sondage",
+        "statusLabel": "Statut",
+        "mealsLabel": "Repas"
+      },
+      "toast": {
+        "updatedTitle": "Sondage mis à jour",
+        "updatedBody": "Sondage marqué comme {{status}}.",
+        "savedTitle": "Sondage enregistré",
+        "savedBody": "La planification du sondage a été mise à jour.",
+        "saveFailedTitle": "Échec de l'enregistrement",
+        "saveFailedBody": "Impossible d'enregistrer ce sondage.",
+        "deletedTitle": "Sondage supprimé",
+        "deletedBody": "Le sondage a été retiré.",
+        "deleteFailedTitle": "Échec de la suppression",
+        "deleteFailedBody": "Impossible de supprimer ce sondage.",
+        "statusUpdateFailedTitle": "Échec de la mise à jour du statut",
+        "statusUpdateFailedBody": "Impossible de mettre à jour le statut du sondage.",
+        "unavailableTitle": "Sondages indisponibles",
+        "unavailableBody": "Impossible de charger la configuration des sondages."
+      }
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "subtitle": "Attribution des rôles et état d'activation des comptes.",
+      "searchPlaceholder": "Rechercher des employés",
+      "table": {
+        "name": "Nom",
+        "email": "E-mail",
+        "department": "Département",
+        "role": "Rôle",
+        "status": "Statut",
+        "action": "Action"
+      },
+      "dialog": {
+        "header": "Accès utilisateur",
+        "nameLabel": "Nom",
+        "rolesLabel": "Rôles",
+        "activeAccountLabel": "Compte actif"
+      },
+      "toast": {
+        "updatedTitle": "Utilisateur mis à jour",
+        "updatedBody": "Les rôles et l'état d'activation ont été enregistrés.",
+        "updateFailedTitle": "Échec de la mise à jour",
+        "updateFailedBody": "Impossible de mettre à jour l'accès utilisateur.",
+        "unavailableTitle": "Utilisateurs indisponibles",
+        "unavailableBody": "Impossible de charger les rôles des utilisateurs."
+      }
+    },
+    "reports": {
+      "title": "Rapports",
+      "subtitle": "Consommation mensuelle des repas par employé avec exports.",
+      "badge": "CSV + Excel",
+      "searchPlaceholder": "Rechercher un employé",
+      "exportCsv": "Exporter en CSV",
+      "exportExcel": "Exporter en Excel",
+      "table": {
+        "employee": "Employé",
+        "email": "E-mail",
+        "department": "Département",
+        "month": "Mois",
+        "totalVotes": "Total des votes",
+        "favoriteMeal": "Repas préféré"
+      },
+      "emptyMessage": "Aucune ligne de rapport trouvée pour la période sélectionnée.",
+      "toast": {
+        "unavailableTitle": "Rapport indisponible",
+        "unavailableBody": "Impossible de charger le rapport mensuel."
+      }
+    }
+  },
+  "employee": {
+    "eyebrow": "Employé",
+    "dashboard": {
+      "title": "Tableau de bord",
+      "subtitle": "Votre activité de vote et les actions du jour.",
+      "badge": "En direct",
+      "todaySurveyTitle": "Sondage du jour",
+      "hasOpenSurvey": "Un sondage est disponible pour le vote.",
+      "noOpenSurvey": "Aucun sondage ouvert aujourd'hui.",
+      "monthTitle": "Ce mois-ci",
+      "monthBody": "{{count}} repas choisis jusqu'à présent.",
+      "lastMealTitle": "Dernier repas sélectionné",
+      "noMealYet": "Aucun repas pour le moment",
+      "statusTitle": "Statut",
+      "votedToday": "Votre vote du jour est déjà enregistré.",
+      "canVote": "Vous pouvez encore voter aujourd'hui.",
+      "quickActionsTitle": "Actions rapides",
+      "quickActionsBody": "Accédez au vote ou consultez votre historique mensuel.",
+      "openSurveyAction": "Ouvrir le sondage du jour",
+      "viewHistoryAction": "Voir mon historique",
+      "toast": {
+        "unavailableTitle": "Tableau de bord indisponible",
+        "unavailableBody": "Impossible de charger votre tableau de bord."
+      }
+    },
+    "todaySurvey": {
+      "title": "Sondage du jour",
+      "subtitle": "Les sondages ouverts apparaissent ici avec les choix de repas et le statut du vote.",
+      "badge": "Vote unique",
+      "loading": "Chargement du sondage du jour...",
+      "emptyTitle": "Aucun sondage aujourd'hui",
+      "emptyMessage": "Il n'y a pas encore de sondage ouvert pour aujourd'hui.",
+      "noDescription": "Aucune description fournie.",
+      "selectedTag": "Sélectionné",
+      "chooseMeal": "Choisir ce repas",
+      "submitSectionTitle": "Soumettre votre vote",
+      "votedNote": "Votre vote a été enregistré pour aujourd'hui.",
+      "notVotedNote": "Une fois soumis, le vote est verrouillé pour la journée.",
+      "submitVote": "Soumettre le vote",
+      "toast": {
+        "votedTitle": "Vote enregistré",
+        "votedBody": "Votre choix de repas a été enregistré pour aujourd'hui.",
+        "voteFailedTitle": "Échec du vote",
+        "voteFailedBody": "Impossible de soumettre votre vote. Si vous avez déjà voté, l'enregistrement reste inchangé.",
+        "unavailableTitle": "Sondage indisponible",
+        "unavailableBody": "Impossible de charger le sondage du jour."
+      }
+    },
+    "history": {
+      "title": "Mon historique",
+      "subtitle": "Historique mensuel des votes avec recherche par repas.",
+      "badge": "Par mois",
+      "searchPlaceholder": "Rechercher par nom de repas",
+      "table": {
+        "surveyDate": "Date du sondage",
+        "meal": "Repas",
+        "votedAt": "Voté le",
+        "status": "Statut"
+      },
+      "emptyMessage": "Aucun historique de repas trouvé pour le mois sélectionné.",
+      "toast": {
+        "unavailableTitle": "Historique indisponible",
+        "unavailableBody": "Impossible de charger votre historique de repas."
+      }
+    },
+    "profile": {
+      "eyebrow": "Compte",
+      "title": "Profil",
+      "subtitle": "Les métadonnées de votre profil proviennent de la table profiles de Supabase.",
+      "fullNameLabel": "Nom complet",
+      "emailLabel": "E-mail",
+      "departmentLabel": "Département"
     }
   }
 }

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -10,13 +11,13 @@ import { AdminDashboardMetrics, TrendPoint } from '../../core/models/app.models'
 @Component({
   selector: 'app-admin-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardModule, ChartModule, SkeletonModule, PageHeaderComponent],
+  imports: [TranslatePipe, CardModule, ChartModule, SkeletonModule, PageHeaderComponent],
   template: `
     <app-page-header
-      eyebrow="Admin"
-      title="Dashboard"
-      subtitle="Participation, consumption, and trend monitoring across the current month."
-      badge="KPIs"
+      [eyebrow]="'admin.eyebrow' | translate"
+      [title]="'admin.dashboard.title' | translate"
+      [subtitle]="'admin.dashboard.subtitle' | translate"
+      [badge]="'admin.dashboard.badge' | translate"
     ></app-page-header>
 
     <div class="grid">
@@ -26,32 +27,37 @@ import { AdminDashboardMetrics, TrendPoint } from '../../core/models/app.models'
             <p-skeleton width="7rem" height="1.5rem"></p-skeleton>
             <p-skeleton width="5rem" height="2rem" styleClass="mt-3"></p-skeleton>
           } @else {
-            <h3>Participation</h3>
-            <p class="text-600">{{ metrics().participationRate }}% today ({{ metrics().votesToday }}/{{ metrics().eligibleEmployees }})</p>
+            <h3>{{ 'admin.dashboard.participationTitle' | translate }}</h3>
+            <p class="text-600">
+              {{
+                'admin.dashboard.participationBody'
+                  | translate: { rate: metrics().participationRate, votes: metrics().votesToday, eligible: metrics().eligibleEmployees }
+              }}
+            </p>
           }
         </p-card>
       </div>
       <div class="col-12 md:col-6 xl:col-3">
         <p-card styleClass="stat-card h-full">
-          <h3>Monthly meals</h3>
-          <p class="text-600">{{ metrics().totalMealsThisMonth }} meals consumed this month.</p>
+          <h3>{{ 'admin.dashboard.monthlyMealsTitle' | translate }}</h3>
+          <p class="text-600">{{ 'admin.dashboard.monthlyMealsBody' | translate: { count: metrics().totalMealsThisMonth } }}</p>
         </p-card>
       </div>
       <div class="col-12 md:col-6 xl:col-3">
         <p-card styleClass="stat-card h-full">
-          <h3>Top meal</h3>
+          <h3>{{ 'admin.dashboard.topMealTitle' | translate }}</h3>
           <p class="text-600">{{ metrics().mostPopularMeal }}</p>
         </p-card>
       </div>
       <div class="col-12 md:col-6 xl:col-3">
         <p-card styleClass="stat-card h-full">
-          <h3>Report health</h3>
-          <p class="text-600">Exports are driven by the monthly report SQL function.</p>
+          <h3>{{ 'admin.dashboard.reportHealthTitle' | translate }}</h3>
+          <p class="text-600">{{ 'admin.dashboard.reportHealthBody' | translate }}</p>
         </p-card>
       </div>
       <div class="col-12">
         <p-card>
-          <h3 class="mt-0">Monthly trend</h3>
+          <h3 class="mt-0">{{ 'admin.dashboard.monthlyTrendTitle' | translate }}</h3>
           <p-chart type="line" [data]="chartData()"></p-chart>
         </p-card>
       </div>
@@ -61,12 +67,13 @@ import { AdminDashboardMetrics, TrendPoint } from '../../core/models/app.models'
 export class AdminDashboardComponent {
   private readonly adminService = inject(AdminService);
   private readonly toastService = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly loading = signal(true);
   readonly metrics = signal<AdminDashboardMetrics>({
     participationRate: 0,
     totalMealsThisMonth: 0,
-    mostPopularMeal: 'No data',
+    mostPopularMeal: this.translateService.instant('common.placeholders.noData'),
     votesToday: 0,
     eligibleEmployees: 0
   });
@@ -76,7 +83,7 @@ export class AdminDashboardComponent {
     labels: this.trend().map((point) => point.label),
     datasets: [
       {
-        label: 'Votes',
+        label: this.translateService.instant('admin.dashboard.chartVotesLabel'),
         data: this.trend().map((point) => point.value),
         fill: true,
         tension: 0.35
@@ -97,7 +104,10 @@ export class AdminDashboardComponent {
       this.trend.set(trend);
     } catch (error) {
       console.error(error);
-      this.toastService.error('Dashboard unavailable', 'Unable to load admin metrics.');
+      this.toastService.error(
+        this.translateService.instant('admin.dashboard.toast.unavailableTitle'),
+        this.translateService.instant('admin.dashboard.toast.unavailableBody')
+      );
     } finally {
       this.loading.set(false);
     }

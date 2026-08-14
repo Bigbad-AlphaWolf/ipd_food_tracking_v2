@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 
 export type AppLanguage = 'en' | 'fr';
 
-const DEFAULT_LANGUAGE: AppLanguage = 'en';
+const DEFAULT_LANGUAGE: AppLanguage = 'fr';
 const STORAGE_KEY = 'food-tracker.language';
 
 @Injectable({ providedIn: 'root' })

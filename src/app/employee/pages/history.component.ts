@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { AppTableComponent } from '../../shared/components/app-table.component';
 import { SearchToolbarComponent } from '../../shared/components/search-toolbar.component';
@@ -9,13 +10,13 @@ import { AppTableColumn, EmployeeHistoryRow, SelectOption } from '../../core/mod
 @Component({
   selector: 'app-history',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PageHeaderComponent, AppTableComponent, SearchToolbarComponent],
+  imports: [TranslatePipe, PageHeaderComponent, AppTableComponent, SearchToolbarComponent],
   template: `
     <app-page-header
-      eyebrow="Employee"
-      title="My History"
-      subtitle="Monthly voting history with searchable meal records."
-      badge="By month"
+      [eyebrow]="'employee.eyebrow' | translate"
+      [title]="'employee.history.title' | translate"
+      [subtitle]="'employee.history.subtitle' | translate"
+      [badge]="'employee.history.badge' | translate"
     ></app-page-header>
 
     <app-search-toolbar
@@ -24,21 +25,22 @@ import { AppTableColumn, EmployeeHistoryRow, SelectOption } from '../../core/mod
       [showYear]="true"
       [month]="month()"
       [year]="year()"
-      [monthOptions]="monthOptions"
+      [monthOptions]="monthOptions()"
       [yearOptions]="yearOptions"
-      searchPlaceholder="Search by meal name"
+      [searchPlaceholder]="'employee.history.searchPlaceholder' | translate"
       (searchChange)="search.set($event)"
       (monthChange)="setMonth($event)"
       (yearChange)="setYear($event)"
       (clear)="resetFilters()"
     ></app-search-toolbar>
 
-    <app-table [columns]="columns" [rows]="filteredRows()" [loading]="loading()" emptyMessage="No meal history found for the selected month."></app-table>
+    <app-table [columns]="columns()" [rows]="filteredRows()" [loading]="loading()" [emptyMessage]="'employee.history.emptyMessage' | translate"></app-table>
   `
 })
 export class HistoryComponent {
   private readonly employeeService = inject(EmployeeService);
   private readonly toastService = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly loading = signal(false);
   readonly search = signal('');
@@ -46,27 +48,23 @@ export class HistoryComponent {
   readonly year = signal(new Date().getFullYear());
   readonly rows = signal<EmployeeHistoryRow[]>([]);
 
-  readonly columns: AppTableColumn[] = [
-    { field: 'surveyDate', header: 'Survey Date', type: 'date' },
-    { field: 'mealName', header: 'Meal' },
-    { field: 'votedAt', header: 'Voted At', type: 'datetime' },
-    { field: 'status', header: 'Status', type: 'tag' }
-  ];
+  readonly columns = computed<AppTableColumn[]>(() => {
+    this.translateService.currentLang();
+    return [
+      { field: 'surveyDate', header: this.translateService.instant('employee.history.table.surveyDate'), type: 'date' },
+      { field: 'mealName', header: this.translateService.instant('employee.history.table.meal') },
+      { field: 'votedAt', header: this.translateService.instant('employee.history.table.votedAt'), type: 'datetime' },
+      { field: 'status', header: this.translateService.instant('employee.history.table.status'), type: 'tag' }
+    ];
+  });
 
-  readonly monthOptions: SelectOption<number>[] = [
-    { label: 'January', value: 1 },
-    { label: 'February', value: 2 },
-    { label: 'March', value: 3 },
-    { label: 'April', value: 4 },
-    { label: 'May', value: 5 },
-    { label: 'June', value: 6 },
-    { label: 'July', value: 7 },
-    { label: 'August', value: 8 },
-    { label: 'September', value: 9 },
-    { label: 'October', value: 10 },
-    { label: 'November', value: 11 },
-    { label: 'December', value: 12 }
-  ];
+  readonly monthOptions = computed<SelectOption<number>[]>(() => {
+    this.translateService.currentLang();
+    return Array.from({ length: 12 }, (_, index) => {
+      const value = index + 1;
+      return { label: this.translateService.instant(`common.months.${value}`), value };
+    });
+  });
 
   readonly yearOptions: SelectOption<number>[] = Array.from({ length: 5 }, (_, index) => {
     const value = new Date().getFullYear() - index;
@@ -115,7 +113,10 @@ export class HistoryComponent {
       this.rows.set(await this.employeeService.getHistory(this.month(), this.year()));
     } catch (error) {
       console.error(error);
-      this.toastService.error('History unavailable', 'Unable to load your meal history.');
+      this.toastService.error(
+        this.translateService.instant('employee.history.toast.unavailableTitle'),
+        this.translateService.instant('employee.history.toast.unavailableBody')
+      );
     } finally {
       this.loading.set(false);
     }

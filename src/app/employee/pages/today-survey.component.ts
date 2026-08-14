@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -12,21 +13,24 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
 @Component({
   selector: 'app-today-survey',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, CardModule, ButtonModule, TagModule, PageHeaderComponent, EmptyStateComponent],
+  imports: [ReactiveFormsModule, TranslatePipe, CardModule, ButtonModule, TagModule, PageHeaderComponent, EmptyStateComponent],
   template: `
     <app-page-header
-      eyebrow="Employee"
-      title="Today's Survey"
-      subtitle="Open surveys appear here with meal choices and vote status."
-      badge="Single vote"
+      [eyebrow]="'employee.eyebrow' | translate"
+      [title]="'employee.todaySurvey.title' | translate"
+      [subtitle]="'employee.todaySurvey.subtitle' | translate"
+      [badge]="'employee.todaySurvey.badge' | translate"
     ></app-page-header>
 
     @if (loading()) {
       <p-card>
-        <p class="m-0 text-600">Loading today's survey...</p>
+        <p class="m-0 text-600">{{ 'employee.todaySurvey.loading' | translate }}</p>
       </p-card>
     } @else if (!survey()) {
-      <app-empty-state title="No survey today" message="There is no open survey for today yet."></app-empty-state>
+      <app-empty-state
+        [title]="'employee.todaySurvey.emptyTitle' | translate"
+        [message]="'employee.todaySurvey.emptyMessage' | translate"
+      ></app-empty-state>
     } @else {
       <div class="grid">
         @for (surveyMeal of survey()?.survey_meals ?? []; track surveyMeal.id) {
@@ -35,10 +39,10 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
               <div class="flex justify-content-between gap-3 align-items-start">
                 <div>
                   <h3 class="mt-0 mb-2">{{ surveyMeal.meal?.name }}</h3>
-                  <p class="m-0 text-600 line-height-3">{{ surveyMeal.meal?.description || 'No description provided.' }}</p>
+                  <p class="m-0 text-600 line-height-3">{{ surveyMeal.meal?.description || ('employee.todaySurvey.noDescription' | translate) }}</p>
                 </div>
                 @if (selectedMealId() === surveyMeal.meal_id) {
-                  <p-tag value="Selected" severity="success"></p-tag>
+                  <p-tag [value]="'employee.todaySurvey.selectedTag' | translate" severity="success"></p-tag>
                 }
               </div>
 
@@ -46,7 +50,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
                 <button
                   pButton
                   type="button"
-                  [label]="selectedMealId() === surveyMeal.meal_id ? 'Selected' : 'Choose meal'"
+                  [label]="(selectedMealId() === surveyMeal.meal_id ? 'employee.todaySurvey.selectedTag' : 'employee.todaySurvey.chooseMeal') | translate"
                   [outlined]="selectedMealId() !== surveyMeal.meal_id"
                   [disabled]="hasVoted()"
                   (click)="form.controls.mealId.setValue(surveyMeal.meal_id)"
@@ -60,15 +64,15 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
       <p-card class="mt-4">
         <div class="flex flex-column gap-3 md:flex-row md:justify-content-between md:align-items-center">
           <div>
-            <h3 class="mt-0 mb-2">Submit your vote</h3>
+            <h3 class="mt-0 mb-2">{{ 'employee.todaySurvey.submitSectionTitle' | translate }}</h3>
             <p class="m-0 text-600">
-              {{ hasVoted() ? 'Your vote has been recorded for today.' : 'Once submitted, the vote is locked for the day.' }}
+              {{ (hasVoted() ? 'employee.todaySurvey.votedNote' : 'employee.todaySurvey.notVotedNote') | translate }}
             </p>
           </div>
           <button
             pButton
             type="button"
-            label="Submit vote"
+            [label]="'employee.todaySurvey.submitVote' | translate"
             [disabled]="form.invalid || hasVoted() || submitting()"
             (click)="submit()"
           ></button>
@@ -81,6 +85,7 @@ export class TodaySurveyComponent {
   private readonly fb = inject(FormBuilder);
   private readonly employeeService = inject(EmployeeService);
   private readonly toastService = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly loading = signal(true);
   readonly submitting = signal(false);
@@ -115,10 +120,16 @@ export class TodaySurveyComponent {
     try {
       await this.employeeService.submitVote(this.survey()!.id, this.form.controls.mealId.value);
       this.selectedMealId.set(this.form.controls.mealId.value);
-      this.toastService.success('Vote recorded', 'Your meal choice has been saved for today.');
+      this.toastService.success(
+        this.translateService.instant('employee.todaySurvey.toast.votedTitle'),
+        this.translateService.instant('employee.todaySurvey.toast.votedBody')
+      );
     } catch (error) {
       console.error(error);
-      this.toastService.error('Vote failed', 'Unable to submit your vote. If you already voted, the record remains unchanged.');
+      this.toastService.error(
+        this.translateService.instant('employee.todaySurvey.toast.voteFailedTitle'),
+        this.translateService.instant('employee.todaySurvey.toast.voteFailedBody')
+      );
     } finally {
       this.submitting.set(false);
     }
@@ -136,7 +147,10 @@ export class TodaySurveyComponent {
       this.form.controls.mealId.setValue(defaultMealId);
     } catch (error) {
       console.error(error);
-      this.toastService.error('Survey unavailable', 'Unable to load today\'s survey.');
+      this.toastService.error(
+        this.translateService.instant('employee.todaySurvey.toast.unavailableTitle'),
+        this.translateService.instant('employee.todaySurvey.toast.unavailableBody')
+      );
     } finally {
       this.loading.set(false);
     }

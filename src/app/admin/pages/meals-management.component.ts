@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
@@ -20,6 +21,7 @@ import { Meal } from '../../core/models/app.models';
   imports: [
     DatePipe,
     ReactiveFormsModule,
+    TranslatePipe,
     PageHeaderComponent,
     TableModule,
     DialogModule,
@@ -32,36 +34,41 @@ import { Meal } from '../../core/models/app.models';
   ],
   template: `
     <app-page-header
-      eyebrow="Admin"
-      title="Meals Management"
-      subtitle="Create, edit, activate, and retire meal options."
+      [eyebrow]="'admin.eyebrow' | translate"
+      [title]="'admin.meals.title' | translate"
+      [subtitle]="'admin.meals.subtitle' | translate"
     ></app-page-header>
 
     <div class="flex justify-content-end mb-3">
-      <button pButton type="button" label="New meal" icon="pi pi-plus" (click)="openCreate()"></button>
+      <button pButton type="button" [label]="'admin.meals.newMeal' | translate" icon="pi pi-plus" (click)="openCreate()"></button>
     </div>
 
     <p-table [value]="meals()" [loading]="loading()" responsiveLayout="scroll" dataKey="id" styleClass="p-datatable-sm">
       <ng-template pTemplate="header">
         <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Status</th>
-          <th>Created</th>
-          <th class="w-8rem">Actions</th>
+          <th>{{ 'admin.meals.table.name' | translate }}</th>
+          <th>{{ 'admin.meals.table.description' | translate }}</th>
+          <th>{{ 'admin.meals.table.status' | translate }}</th>
+          <th>{{ 'admin.meals.table.created' | translate }}</th>
+          <th class="w-8rem">{{ 'admin.meals.table.actions' | translate }}</th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" let-meal>
         <tr>
           <td>{{ meal.name }}</td>
-          <td>{{ meal.description || 'No description' }}</td>
-          <td><p-tag [value]="meal.is_active ? 'active' : 'inactive'" [severity]="meal.is_active ? 'success' : 'danger'"></p-tag></td>
+          <td>{{ meal.description || ('common.placeholders.noDescription' | translate) }}</td>
+          <td>
+            <p-tag
+              [value]="(meal.is_active ? 'common.status.active' : 'common.status.inactive') | translate"
+              [severity]="meal.is_active ? 'success' : 'danger'"
+            ></p-tag>
+          </td>
           <td>{{ meal.created_at | date: 'mediumDate' }}</td>
           <td>
             <div class="flex align-items-center gap-1">
               <button pButton type="button" icon="pi pi-pencil" text rounded (click)="openEdit(meal)"></button>
-              <app-confirm-delete message="Delete this meal? Existing survey relations should be cleaned up first." (confirmed)="deleteMeal(meal.id)"></app-confirm-delete>
+              <app-confirm-delete [message]="'admin.meals.deleteConfirm' | translate" (confirmed)="deleteMeal(meal.id)"></app-confirm-delete>
             </div>
           </td>
         </tr>
@@ -69,7 +76,7 @@ import { Meal } from '../../core/models/app.models';
     </p-table>
 
     <p-dialog
-      header="Meal"
+      [header]="'admin.meals.dialog.header' | translate"
       [visible]="dialogVisible()"
       (visibleChange)="dialogVisible.set($event)"
       [modal]="true"
@@ -77,24 +84,24 @@ import { Meal } from '../../core/models/app.models';
     >
       <form class="flex flex-column gap-4" [formGroup]="form">
         <div class="flex flex-column gap-2">
-          <label for="meal-name">Name</label>
+          <label for="meal-name">{{ 'admin.meals.dialog.nameLabel' | translate }}</label>
           <input pInputText id="meal-name" formControlName="name" />
         </div>
 
         <div class="flex flex-column gap-2">
-          <label for="meal-description">Description</label>
+          <label for="meal-description">{{ 'admin.meals.dialog.descriptionLabel' | translate }}</label>
           <textarea pTextarea id="meal-description" rows="4" formControlName="description"></textarea>
         </div>
 
         <div class="flex align-items-center gap-2">
           <p-toggleswitch formControlName="is_active"></p-toggleswitch>
-          <label for="">Active meal</label>
+          <label for="">{{ 'admin.meals.dialog.activeLabel' | translate }}</label>
         </div>
       </form>
 
       <ng-template pTemplate="footer">
-        <button pButton type="button" label="Cancel" severity="secondary" outlined (click)="dialogVisible.set(false)"></button>
-        <button pButton type="button" label="Save" [disabled]="form.invalid || saving()" (click)="save()"></button>
+        <button pButton type="button" [label]="'common.actions.cancel' | translate" severity="secondary" outlined (click)="dialogVisible.set(false)"></button>
+        <button pButton type="button" [label]="'common.actions.save' | translate" [disabled]="form.invalid || saving()" (click)="save()"></button>
       </ng-template>
     </p-dialog>
   `
@@ -103,6 +110,7 @@ export class MealsManagementComponent {
   private readonly fb = inject(FormBuilder);
   private readonly adminService = inject(AdminService);
   private readonly toastService = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly loading = signal(false);
   readonly saving = signal(false);
@@ -142,12 +150,18 @@ export class MealsManagementComponent {
 
     try {
       await this.adminService.saveMeal({ id: this.editingId() ?? undefined, ...this.form.getRawValue() });
-      this.toastService.success('Meal saved', 'The meal catalog has been updated.');
+      this.toastService.success(
+        this.translateService.instant('admin.meals.toast.savedTitle'),
+        this.translateService.instant('admin.meals.toast.savedBody')
+      );
       this.dialogVisible.set(false);
       await this.load();
     } catch (error) {
       console.error(error);
-      this.toastService.error('Save failed', 'Unable to save this meal.');
+      this.toastService.error(
+        this.translateService.instant('admin.meals.toast.saveFailedTitle'),
+        this.translateService.instant('admin.meals.toast.saveFailedBody')
+      );
     } finally {
       this.saving.set(false);
     }
@@ -156,11 +170,17 @@ export class MealsManagementComponent {
   async deleteMeal(id: string): Promise<void> {
     try {
       await this.adminService.deleteMeal(id);
-      this.toastService.success('Meal deleted', 'The meal has been removed.');
+      this.toastService.success(
+        this.translateService.instant('admin.meals.toast.deletedTitle'),
+        this.translateService.instant('admin.meals.toast.deletedBody')
+      );
       await this.load();
     } catch (error) {
       console.error(error);
-      this.toastService.error('Delete failed', 'Unable to delete this meal.');
+      this.toastService.error(
+        this.translateService.instant('admin.meals.toast.deleteFailedTitle'),
+        this.translateService.instant('admin.meals.toast.deleteFailedBody')
+      );
     }
   }
 
@@ -171,7 +191,10 @@ export class MealsManagementComponent {
       this.meals.set(await this.adminService.getMeals());
     } catch (error) {
       console.error(error);
-      this.toastService.error('Meals unavailable', 'Unable to load the meal catalog.');
+      this.toastService.error(
+        this.translateService.instant('admin.meals.toast.unavailableTitle'),
+        this.translateService.instant('admin.meals.toast.unavailableBody')
+      );
     } finally {
       this.loading.set(false);
     }
