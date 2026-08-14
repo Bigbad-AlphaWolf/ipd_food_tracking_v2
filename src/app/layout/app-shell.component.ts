@@ -87,7 +87,7 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
               (click)="themeService.toggle()"
             ></button>
 
-            <a routerLink="/employee/profile" class="app-avatar-link" [attr.aria-label]="'shell.menu.profile' | translate">
+            <a [routerLink]="profileRoute()" class="app-avatar-link" [attr.aria-label]="'shell.menu.profile' | translate">
               <p-avatar [label]="initials()" shape="circle" size="large"></p-avatar>
             </a>
 
@@ -348,14 +348,27 @@ export class AppShellComponent {
     return roles.map((role) => this.translateService.instant(`roles.${role}`)).join(', ');
   });
 
+  /** The shared ProfileComponent is mounted under both /employee and /platform, guarded per-role. */
+  readonly profileRoute = computed(() =>
+    this.authService.hasRole('platform_administrator') ? '/platform/profile' : '/employee/profile'
+  );
+
   readonly menuItems = computed<MenuItem[]>(() => {
     this.translateService.currentLang();
-    const hasAdminRole = this.authService.hasRole('admin');
+
+    if (this.authService.hasRole('platform_administrator')) {
+      return [
+        { label: this.translateService.instant('shell.menu.organizations'), icon: 'pi pi-building', routerLink: '/platform/organizations' },
+        { label: this.translateService.instant('shell.menu.allUsers'), icon: 'pi pi-users', routerLink: '/platform/users' },
+        { label: this.translateService.instant('shell.menu.profile'), icon: 'pi pi-user', routerLink: '/platform/profile' }
+      ];
+    }
+
     const common: MenuItem[] = [
       { label: this.translateService.instant('shell.menu.profile'), icon: 'pi pi-user', routerLink: '/employee/profile' }
     ];
 
-    if (hasAdminRole) {
+    if (this.authService.hasRole('admin')) {
       return [
         { label: this.translateService.instant('shell.menu.dashboard'), icon: 'pi pi-chart-bar', routerLink: '/admin/dashboard' },
         { label: this.translateService.instant('shell.menu.meals'), icon: 'pi pi-apple', routerLink: '/admin/meals' },

@@ -63,8 +63,9 @@
     }
   },
   "roles": {
-    "admin": "Admin",
-    "employee": "Employee"
+    "admin": "Organization Administrator",
+    "employee": "Employee",
+    "platform_administrator": "Platform Administrator"
   },
   "shell": {
     "subtitle": "Meal operations",
@@ -78,7 +79,9 @@
       "reports": "Reports",
       "todaySurvey": "Today's Survey",
       "history": "My History",
-      "profile": "Profile"
+      "profile": "Profile",
+      "organizations": "Organizations",
+      "allUsers": "All Users"
     }
   },
   "auth": {
@@ -117,6 +120,8 @@
       "phonePlaceholder": "+1 555 000 1111",
       "departmentLabel": "Department",
       "departmentPlaceholder": "Operations",
+      "organizationCodeLabel": "Organization code",
+      "organizationCodePlaceholder": "e.g. ACME",
       "passwordLabel": "Password",
       "confirmPasswordLabel": "Confirm password",
       "passwordMismatch": "Passwords do not match.",
@@ -331,6 +336,73 @@
       "fullNameLabel": "Full name",
       "emailLabel": "Email",
       "departmentLabel": "Department"
+    }
+  },
+  "platform": {
+    "eyebrow": "Platform",
+    "organizations": {
+      "title": "Organizations",
+      "subtitle": "Create and manage every organization on the platform.",
+      "newOrganization": "New organization",
+      "table": {
+        "name": "Name",
+        "code": "Code",
+        "description": "Description",
+        "status": "Status",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "deleteConfirm": "Delete this organization? This fails if any users or surveys still reference it.",
+      "dialog": {
+        "header": "Organization",
+        "nameLabel": "Name",
+        "codeLabel": "Code",
+        "codePlaceholder": "e.g. ACME",
+        "descriptionLabel": "Description",
+        "activeLabel": "Active organization"
+      },
+      "toast": {
+        "savedTitle": "Organization saved",
+        "savedBody": "The organization has been updated.",
+        "saveFailedTitle": "Save failed",
+        "saveFailedBody": "Unable to save this organization. The code may already be in use.",
+        "deletedTitle": "Organization deleted",
+        "deletedBody": "The organization has been removed.",
+        "deleteFailedTitle": "Delete failed",
+        "deleteFailedBody": "Unable to delete this organization while it still has users or surveys.",
+        "unavailableTitle": "Organizations unavailable",
+        "unavailableBody": "Unable to load organizations."
+      }
+    },
+    "users": {
+      "title": "All Users",
+      "subtitle": "Users and roles across every organization.",
+      "searchPlaceholder": "Search users",
+      "organizationFilterPlaceholder": "All organizations",
+      "noOrganization": "No organization",
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "organization": "Organization",
+        "role": "Role",
+        "status": "Status",
+        "action": "Action"
+      },
+      "dialog": {
+        "header": "User access",
+        "nameLabel": "Name",
+        "rolesLabel": "Roles",
+        "organizationLabel": "Organization",
+        "activeAccountLabel": "Active account"
+      },
+      "toast": {
+        "updatedTitle": "User updated",
+        "updatedBody": "Roles and organization were saved.",
+        "updateFailedTitle": "Update failed",
+        "updateFailedBody": "Unable to update this user.",
+        "unavailableTitle": "Users unavailable",
+        "unavailableBody": "Unable to load users."
+      }
     }
   }
 }

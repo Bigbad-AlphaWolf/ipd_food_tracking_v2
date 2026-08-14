@@ -38,6 +38,7 @@ export class EmployeeRegistrationComponent {
     {
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
+      organizationCode: ['', [Validators.required, Validators.minLength(2)]],
       phoneNumber: [''],
       department: [''],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -57,6 +58,7 @@ export class EmployeeRegistrationComponent {
       fullName: value.fullName,
       email: value.email,
       password: value.password,
+      organizationCode: value.organizationCode,
       phoneNumber: value.phoneNumber,
       department: value.department
     });

@@ -25,6 +25,16 @@
         </div>
 
         <div class="col-12 md:col-6 flex flex-column gap-2">
+          <label for="organizationCode" class="font-medium">{{ 'auth.registration.organizationCodeLabel' | translate }}</label>
+          <input
+            pInputText
+            id="organizationCode"
+            formControlName="organizationCode"
+            [placeholder]="'auth.registration.organizationCodePlaceholder' | translate"
+          />
+        </div>
+
+        <div class="col-12 md:col-6 flex flex-column gap-2">
           <label for="phoneNumber" class="font-medium">{{ 'auth.registration.phoneLabel' | translate }}</label>
           <input pInputText id="phoneNumber" formControlName="phoneNumber" [placeholder]="'auth.registration.phonePlaceholder' | translate" />
         </div>

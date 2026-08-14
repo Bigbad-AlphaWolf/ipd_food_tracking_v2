@@ -27,6 +27,10 @@ export class AuthService {
   readonly role = computed<AppRole | null>(() => {
     const roles = this.roles();
 
+    if (roles.includes('platform_administrator')) {
+      return 'platform_administrator';
+    }
+
     if (roles.includes('admin')) {
       return 'admin';
     }
@@ -34,6 +38,19 @@ export class AuthService {
     return roles[0] ?? null;
   });
   readonly initialized = computed(() => this.initializedState());
+
+  /** Landing route for the current user, by role precedence: platform admin > org admin > employee. */
+  readonly homeRoute = computed<string>(() => {
+    if (this.hasRole('platform_administrator')) {
+      return '/platform';
+    }
+
+    if (this.hasRole('admin')) {
+      return '/admin/dashboard';
+    }
+
+    return '/employee/dashboard';
+  });
 
   constructor() {
     this.bootstrapPromise = this.bootstrap();
@@ -47,11 +64,14 @@ export class AuthService {
     fullName: string;
     email: string;
     password: string;
+    organizationCode: string;
     phoneNumber?: string;
     department?: string;
   }): Promise<void> {
     this.loadingService.start();
     try {
+      const organizationId = await this.resolveOrganizationCode(payload.organizationCode);
+
       const normalizedEmail = payload.email.trim().toLowerCase();
       const { data, error } = await this.supabase.auth.signUp({
         email: normalizedEmail,
@@ -62,7 +82,8 @@ export class AuthService {
             phone_number: payload.phoneNumber?.trim() || null,
             department: payload.department?.trim() || null,
             role: 'employee',
-            roles: ['employee']
+            roles: ['employee'],
+            organization_id: organizationId
           }
         }
       });
@@ -100,7 +121,7 @@ export class AuthService {
 
       this.sessionState.set(data.session);
       await this.loadProfile(data.user);
-      await this.router.navigateByUrl(this.role() === 'admin' ? '/admin/dashboard' : '/employee/dashboard');
+      await this.router.navigateByUrl(this.homeRoute());
       this.toastService.success(
         this.translateService.instant('auth.toast.welcomeTitle'),
         this.translateService.instant('auth.toast.welcomeBody')
@@ -188,10 +209,22 @@ export class AuthService {
     const fromArray = Array.isArray(profile.roles) ? profile.roles : [];
     const fromLegacyRole = profile.role ? [profile.role] : [];
     const merged = [...new Set([...fromArray, ...fromLegacyRole])].filter(
-      (role): role is AppRole => role === 'admin' || role === 'employee'
+      (role): role is AppRole => role === 'admin' || role === 'employee' || role === 'platform_administrator'
     );
 
     return merged.length > 0 ? merged : ['employee'];
+  }
+
+  private async resolveOrganizationCode(organizationCode: string): Promise<string> {
+    const { data, error } = await this.supabase
+      .rpc('resolve_organization_code', { input_code: organizationCode.trim() })
+      .single<string>();
+
+    if (error || !data) {
+      throw error ?? new Error('No active organization found for the supplied code.');
+    }
+
+    return data;
   }
 
   private async resolveIdentifier(identifier: string): Promise<string> {

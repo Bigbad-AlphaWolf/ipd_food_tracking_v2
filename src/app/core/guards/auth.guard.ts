@@ -20,8 +20,7 @@ export const authGuard: CanActivateFn = async (_route, state) => {
 export const roleRedirectGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  const target = authService.hasRole('admin') ? '/admin/dashboard' : '/employee/dashboard';
-  return router.createUrlTree([target]);
+  return router.createUrlTree([authService.homeRoute()]);
 };
 
 export const employeeRegistrationGuard: CanActivateFn = async () => {
@@ -38,5 +37,5 @@ export const employeeRegistrationGuard: CanActivateFn = async () => {
     return true;
   }
 
-  return router.createUrlTree(['/admin/dashboard']);
+  return router.createUrlTree([authService.homeRoute()]);
 };

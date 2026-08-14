@@ -63,8 +63,9 @@
     }
   },
   "roles": {
-    "admin": "Administrateur",
-    "employee": "Employé"
+    "admin": "Administrateur d'organisation",
+    "employee": "Employé",
+    "platform_administrator": "Administrateur de la plateforme"
   },
   "shell": {
     "subtitle": "Gestion des repas",
@@ -78,7 +79,9 @@
       "reports": "Rapports",
       "todaySurvey": "Sondage du jour",
       "history": "Mon historique",
-      "profile": "Profil"
+      "profile": "Profil",
+      "organizations": "Organisations",
+      "allUsers": "Tous les utilisateurs"
     }
   },
   "auth": {
@@ -117,6 +120,8 @@
       "phonePlaceholder": "+33 6 12 34 56 78",
       "departmentLabel": "Département",
       "departmentPlaceholder": "Opérations",
+      "organizationCodeLabel": "Code d'organisation",
+      "organizationCodePlaceholder": "ex. ACME",
       "passwordLabel": "Mot de passe",
       "confirmPasswordLabel": "Confirmer le mot de passe",
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
@@ -331,6 +336,73 @@
       "fullNameLabel": "Nom complet",
       "emailLabel": "E-mail",
       "departmentLabel": "Département"
+    }
+  },
+  "platform": {
+    "eyebrow": "Plateforme",
+    "organizations": {
+      "title": "Organisations",
+      "subtitle": "Créez et gérez toutes les organisations de la plateforme.",
+      "newOrganization": "Nouvelle organisation",
+      "table": {
+        "name": "Nom",
+        "code": "Code",
+        "description": "Description",
+        "status": "Statut",
+        "created": "Créée le",
+        "actions": "Actions"
+      },
+      "deleteConfirm": "Supprimer cette organisation ? Cela échouera si des utilisateurs ou des sondages y font encore référence.",
+      "dialog": {
+        "header": "Organisation",
+        "nameLabel": "Nom",
+        "codeLabel": "Code",
+        "codePlaceholder": "ex. ACME",
+        "descriptionLabel": "Description",
+        "activeLabel": "Organisation active"
+      },
+      "toast": {
+        "savedTitle": "Organisation enregistrée",
+        "savedBody": "L'organisation a été mise à jour.",
+        "saveFailedTitle": "Échec de l'enregistrement",
+        "saveFailedBody": "Impossible d'enregistrer cette organisation. Le code est peut-être déjà utilisé.",
+        "deletedTitle": "Organisation supprimée",
+        "deletedBody": "L'organisation a été retirée.",
+        "deleteFailedTitle": "Échec de la suppression",
+        "deleteFailedBody": "Impossible de supprimer cette organisation tant qu'elle a des utilisateurs ou des sondages.",
+        "unavailableTitle": "Organisations indisponibles",
+        "unavailableBody": "Impossible de charger les organisations."
+      }
+    },
+    "users": {
+      "title": "Tous les utilisateurs",
+      "subtitle": "Utilisateurs et rôles de toutes les organisations.",
+      "searchPlaceholder": "Rechercher des utilisateurs",
+      "organizationFilterPlaceholder": "Toutes les organisations",
+      "noOrganization": "Aucune organisation",
+      "table": {
+        "name": "Nom",
+        "email": "E-mail",
+        "organization": "Organisation",
+        "role": "Rôle",
+        "status": "Statut",
+        "action": "Action"
+      },
+      "dialog": {
+        "header": "Accès utilisateur",
+        "nameLabel": "Nom",
+        "rolesLabel": "Rôles",
+        "organizationLabel": "Organisation",
+        "activeAccountLabel": "Compte actif"
+      },
+      "toast": {
+        "updatedTitle": "Utilisateur mis à jour",
+        "updatedBody": "Les rôles et l'organisation ont été enregistrés.",
+        "updateFailedTitle": "Échec de la mise à jour",
+        "updateFailedBody": "Impossible de mettre à jour cet utilisateur.",
+        "unavailableTitle": "Utilisateurs indisponibles",
+        "unavailableBody": "Impossible de charger les utilisateurs."
+      }
     }
   }
 }

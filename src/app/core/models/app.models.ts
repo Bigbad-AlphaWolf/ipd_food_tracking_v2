@@ -1,6 +1,16 @@
-export type AppRole = 'admin' | 'employee';
+export type AppRole = 'admin' | 'employee' | 'platform_administrator';
 
 export type SurveyStatus = 'draft' | 'open' | 'closed';
+
+export interface Organization {
+  id: string;
+  name: string;
+  description: string | null;
+  code: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Profile {
   id: string;
@@ -10,6 +20,9 @@ export interface Profile {
   department: string | null;
   role?: AppRole;
   roles?: AppRole[];
+  /** Null only for platform_administrator — every admin/employee belongs to exactly one organization. */
+  organization_id: string | null;
+  organization?: Organization;
   is_active: boolean;
   created_at: string;
   updated_at: string;

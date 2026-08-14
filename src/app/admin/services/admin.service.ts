@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { SupabaseService } from '../../core/services/supabase.service';
+import { AuthService } from '../../core/services/auth.service';
 import {
   AdminDashboardMetrics,
   DailySurvey,
@@ -14,6 +15,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class AdminService {
   private readonly supabase = inject(SupabaseService).client;
+  private readonly authService = inject(AuthService);
 
   async getMeals(): Promise<Meal[]> {
     const { data, error } = await this.supabase.from('meals').select('*').order('created_at', { ascending: false });
@@ -68,11 +70,18 @@ export class AdminService {
       throw new Error('You must be authenticated to create or update surveys.');
     }
 
+    const organizationId = this.authService.profile()?.organization_id;
+
+    if (!organizationId) {
+      throw new Error('Your account is not assigned to an organization.');
+    }
+
     const surveyData = {
       id: payload.id,
       survey_date: payload.survey_date,
       status: payload.status,
-      created_by: user.id
+      created_by: user.id,
+      organization_id: organizationId
     };
 
     const { data, error } = await this.supabase.from('daily_surveys').upsert(surveyData).select('id').single<{ id: string }>();
