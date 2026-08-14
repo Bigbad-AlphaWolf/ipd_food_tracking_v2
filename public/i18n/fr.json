@@ -69,6 +69,7 @@
   "shell": {
     "subtitle": "Gestion des repas",
     "navigation": "Navigation",
+    "toggleTheme": "Changer de thème",
     "menu": {
       "dashboard": "Tableau de bord",
       "meals": "Repas",

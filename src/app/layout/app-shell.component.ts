@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { MenubarModule } from 'primeng/menubar';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
+import { DividerModule } from 'primeng/divider';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MenuItem } from 'primeng/api';
@@ -23,11 +23,11 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
     RouterLink,
     RouterLinkActive,
     TranslatePipe,
-    MenubarModule,
     DrawerModule,
     ButtonModule,
     AvatarModule,
     TagModule,
+    DividerModule,
     ToastModule,
     ConfirmDialogModule,
     LanguageSwitcherComponent,
@@ -38,19 +38,106 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
     <p-confirmDialog></p-confirmDialog>
 
     <div class="shell-layout min-h-screen">
-      <p-menubar [model]="menuItems()" styleClass="shadow-none border-none shell-menubar">
-        <ng-template pTemplate="start">
-          <div class="flex align-items-center gap-3">
-            <button pButton type="button" icon="pi pi-bars" text rounded class="lg:hidden" (click)="drawerVisible.set(true)"></button>
+      <header class="app-topbar">
+        <div class="app-topbar-inner">
+          <div class="app-topbar-left">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-bars"
+              text
+              rounded
+              class="icon-btn lg:hidden"
+              [attr.aria-label]="'shell.navigation' | translate"
+              (click)="drawerVisible.set(true)"
+            ></button>
+
+            <a routerLink="/" class="app-brand">
+              <span class="app-brand-mark"><i class="pi pi-apple"></i></span>
+              <span class="app-brand-text hidden sm:flex">
+                <span class="app-brand-name">{{ 'common.appName' | translate }}</span>
+                <span class="app-brand-subtitle">{{ 'shell.subtitle' | translate }}</span>
+              </span>
+            </a>
+
+            <nav class="app-topbar-nav hidden lg:flex" [attr.aria-label]="'shell.navigation' | translate">
+              @for (item of menuItems(); track item.label) {
+                <a class="app-nav-link" [routerLink]="item.routerLink" routerLinkActive="active">
+                  <i [class]="item.icon"></i>
+                  <span>{{ item.label }}</span>
+                </a>
+              }
+            </nav>
+          </div>
+
+          <div class="app-topbar-right">
+            <div class="hidden md:flex align-items-center gap-2">
+              <app-language-switcher></app-language-switcher>
+              <p-tag [value]="roleLabel()" severity="contrast"></p-tag>
+            </div>
+
+            <button
+              pButton
+              type="button"
+              [icon]="themeService.isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
+              text
+              rounded
+              class="icon-btn"
+              [attr.aria-label]="'shell.toggleTheme' | translate"
+              (click)="themeService.toggle()"
+            ></button>
+
+            <a routerLink="/employee/profile" class="app-avatar-link" [attr.aria-label]="'shell.menu.profile' | translate">
+              <p-avatar [label]="initials()" shape="circle" size="large"></p-avatar>
+            </a>
+
+            <button
+              pButton
+              type="button"
+              [label]="'common.actions.logout' | translate"
+              icon="pi pi-sign-out"
+              text
+              class="hidden lg:inline-flex"
+              (click)="logout()"
+            ></button>
+          </div>
+        </div>
+      </header>
+
+      <p-drawer [visible]="drawerVisible()" (visibleChange)="drawerVisible.set($event)" [modal]="true" position="left" styleClass="w-18rem">
+        <ng-template pTemplate="header">
+          <div class="flex align-items-center gap-2">
+            <span class="app-brand-mark"><i class="pi pi-apple"></i></span>
             <div>
-              <div class="text-sm text-500">{{ 'common.appName' | translate }}</div>
-              <div class="font-semibold">{{ 'shell.subtitle' | translate }}</div>
+              <div class="font-semibold">{{ 'common.appName' | translate }}</div>
+              <small class="text-500">{{ authService.profile()?.full_name }}</small>
             </div>
           </div>
         </ng-template>
 
-        <ng-template pTemplate="end">
-          <div class="flex align-items-center gap-2">
+        <nav class="flex flex-column gap-1 mt-3" [attr.aria-label]="'shell.navigation' | translate">
+          @for (item of menuItems(); track item.label) {
+            <a
+              class="app-nav-link app-nav-link-block"
+              [routerLink]="item.routerLink"
+              routerLinkActive="active"
+              (click)="drawerVisible.set(false)"
+            >
+              <i [class]="item.icon"></i>
+              <span>{{ item.label }}</span>
+            </a>
+          }
+        </nav>
+
+        <p-divider></p-divider>
+
+        <div class="flex flex-column gap-3">
+          <div class="flex align-items-center justify-content-between">
+            <span class="text-sm text-500">{{ 'employee.profile.eyebrow' | translate }}</span>
+            <p-tag [value]="roleLabel()" severity="contrast"></p-tag>
+          </div>
+
+          <div class="flex align-items-center justify-content-between">
             <app-language-switcher></app-language-switcher>
             <button
               pButton
@@ -58,36 +145,22 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
               [icon]="themeService.isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
               text
               rounded
+              class="icon-btn"
+              [attr.aria-label]="'shell.toggleTheme' | translate"
               (click)="themeService.toggle()"
             ></button>
-            <p-tag [value]="roleLabel()" severity="contrast"></p-tag>
-            <p-avatar [label]="initials()" shape="circle"></p-avatar>
-            <button pButton type="button" [label]="'common.actions.logout' | translate" text (click)="logout()"></button>
           </div>
-        </ng-template>
-      </p-menubar>
 
-      <p-drawer [visible]="drawerVisible()" (visibleChange)="drawerVisible.set($event)" [modal]="true" position="left" styleClass="w-18rem">
-        <ng-template pTemplate="header">
-          <div>
-            <div class="font-semibold">{{ 'shell.navigation' | translate }}</div>
-            <small class="text-500">{{ authService.profile()?.full_name }}</small>
-          </div>
-        </ng-template>
-
-        <nav class="flex flex-column gap-2 mt-4">
-          @for (item of menuItems(); track item.label) {
-            <a
-              class="p-3 border-round hover:surface-100 transition-duration-150"
-              [routerLink]="item.routerLink"
-              routerLinkActive="surface-200"
-              (click)="drawerVisible.set(false)"
-            >
-              <i [class]="item.icon"></i>
-              <span class="ml-2">{{ item.label }}</span>
-            </a>
-          }
-        </nav>
+          <button
+            pButton
+            type="button"
+            [label]="'common.actions.logout' | translate"
+            icon="pi pi-sign-out"
+            severity="secondary"
+            outlined
+            (click)="logout()"
+          ></button>
+        </div>
       </p-drawer>
 
       <main class="app-page">
@@ -109,18 +182,140 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
         padding-bottom: 2rem;
       }
 
-      .shell-menubar {
+      .icon-btn {
+        width: 2.75rem;
+        height: 2.75rem;
+      }
+
+      .app-topbar {
         position: sticky;
         top: 0;
         z-index: 1000;
-        margin: 0.75rem;
-        border-radius: 1rem;
-        background: rgba(255, 255, 255, 0.82);
+        background: rgba(255, 255, 255, 0.86);
         backdrop-filter: blur(14px);
+        border-bottom: 1px solid rgba(23, 32, 51, 0.06);
       }
 
-      :host-context(.app-dark) .shell-menubar {
-        background: rgba(15, 23, 40, 0.86);
+      :host-context(.app-dark) .app-topbar {
+        background: rgba(15, 23, 40, 0.88);
+        border-bottom-color: rgba(255, 255, 255, 0.06);
+      }
+
+      @media (min-width: 768px) {
+        .app-topbar {
+          margin: 0.75rem;
+          border-radius: 1.25rem;
+          border-bottom: none;
+          box-shadow: 0 12px 30px rgba(15, 23, 40, 0.06);
+        }
+      }
+
+      .app-topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+      }
+
+      @media (min-width: 768px) {
+        .app-topbar-inner {
+          padding: 0.75rem 1.25rem;
+        }
+      }
+
+      .app-topbar-left,
+      .app-topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 0;
+      }
+
+      .app-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        min-width: 0;
+      }
+
+      .app-brand-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.75rem;
+        background: linear-gradient(135deg, var(--p-primary-color), #fb923c);
+        color: #ffffff;
+        font-size: 1.05rem;
+        flex-shrink: 0;
+      }
+
+      .app-brand-text {
+        flex-direction: column;
+        line-height: 1.15;
+        overflow: hidden;
+      }
+
+      .app-brand-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        white-space: nowrap;
+      }
+
+      .app-brand-subtitle {
+        font-size: 0.7rem;
+        color: var(--p-text-muted-color);
+        white-space: nowrap;
+      }
+
+      .app-topbar-nav {
+        align-items: center;
+        gap: 0.25rem;
+        margin-left: 1rem;
+      }
+
+      .app-nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.875rem;
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--p-text-muted-color);
+        transition:
+          background-color 150ms ease,
+          color 150ms ease;
+      }
+
+      .app-nav-link:hover {
+        background: var(--p-surface-100);
+        color: var(--p-text-color);
+      }
+
+      .app-nav-link.active {
+        background: var(--p-primary-50);
+        color: var(--p-primary-700);
+      }
+
+      :host-context(.app-dark) .app-nav-link:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      :host-context(.app-dark) .app-nav-link.active {
+        background: rgba(251, 146, 60, 0.16);
+        color: var(--p-primary-300);
+      }
+
+      .app-nav-link-block {
+        min-height: 2.75rem;
+      }
+
+      .app-avatar-link {
+        display: inline-flex;
+        border-radius: 50%;
       }
     `
   ]

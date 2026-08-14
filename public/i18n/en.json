@@ -69,6 +69,7 @@
   "shell": {
     "subtitle": "Meal operations",
     "navigation": "Navigation",
+    "toggleTheme": "Toggle theme",
     "menu": {
       "dashboard": "Dashboard",
       "meals": "Meals",

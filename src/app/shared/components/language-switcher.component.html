@@ -7,7 +7,7 @@
         type="button"
         size="small"
         [label]="('language.short.' + language) | translate"
-        [severity]="currentLanguage() === language ? 'help' : 'secondary'"
+        [severity]="currentLanguage() === language ? 'primary' : 'secondary'"
         [attr.aria-label]="('language.option.' + language) | translate"
         (click)="setLanguage(language)"
       ></button>

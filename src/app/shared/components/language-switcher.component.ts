@@ -17,7 +17,5 @@ export class LanguageSwitcherComponent {
 
   setLanguage(language: AppLanguage): void {
     this.languageService.setLanguage(language);
-    console.log(language);
-
   }
 }
