@@ -14,6 +14,7 @@ import { ThemeService } from '../core/services/theme.service';
 import { LoadingService } from '../core/services/loading.service';
 import { LoadingSpinnerComponent } from '../shared/components/loading-spinner.component';
 import { LanguageSwitcherComponent } from '../shared/components/language-switcher.component';
+import { OrganizationSwitcherComponent } from '../shared/components/organization-switcher.component';
 
 @Component({
   selector: 'app-shell',
@@ -31,6 +32,7 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
     ToastModule,
     ConfirmDialogModule,
     LanguageSwitcherComponent,
+    OrganizationSwitcherComponent,
     LoadingSpinnerComponent
   ],
   template: `
@@ -72,6 +74,9 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
 
           <div class="app-topbar-right">
             <div class="hidden md:flex align-items-center gap-2">
+              <div class="organization-switcher-slot">
+                <app-organization-switcher></app-organization-switcher>
+              </div>
               <app-language-switcher></app-language-switcher>
               <p-tag [value]="roleLabel()" severity="contrast"></p-tag>
             </div>
@@ -136,6 +141,13 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
             <span class="text-sm text-500">{{ 'employee.profile.eyebrow' | translate }}</span>
             <p-tag [value]="roleLabel()" severity="contrast"></p-tag>
           </div>
+
+          @if (authService.organizations().length > 1) {
+            <div class="flex flex-column gap-2">
+              <span class="text-sm text-500">{{ 'shell.switchOrganization' | translate }}</span>
+              <app-organization-switcher></app-organization-switcher>
+            </div>
+          }
 
           <div class="flex align-items-center justify-content-between">
             <app-language-switcher></app-language-switcher>
@@ -316,6 +328,10 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
       .app-avatar-link {
         display: inline-flex;
         border-radius: 50%;
+      }
+
+      .organization-switcher-slot {
+        width: 12rem;
       }
     `
   ]

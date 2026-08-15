@@ -24,14 +24,40 @@
           <input pInputText id="email" type="email" formControlName="email" [placeholder]="'auth.registration.emailPlaceholder' | translate" />
         </div>
 
-        <div class="col-12 md:col-6 flex flex-column gap-2">
-          <label for="organizationCode" class="font-medium">{{ 'auth.registration.organizationCodeLabel' | translate }}</label>
-          <input
-            pInputText
-            id="organizationCode"
-            formControlName="organizationCode"
-            [placeholder]="'auth.registration.organizationCodePlaceholder' | translate"
-          />
+        <div class="col-12 flex flex-column gap-2" formArrayName="organizationCodes">
+          <label class="font-medium">{{ 'auth.registration.organizationCodeLabel' | translate }}</label>
+          @for (control of organizationCodes.controls; track $index; let i = $index) {
+            <div class="flex align-items-center gap-2">
+              <input
+                pInputText
+                class="flex-1"
+                [formControlName]="i"
+                [placeholder]="'auth.registration.organizationCodePlaceholder' | translate"
+              />
+              @if (organizationCodes.length > 1) {
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-trash"
+                  severity="danger"
+                  text
+                  rounded
+                  [attr.aria-label]="'auth.registration.removeOrganization' | translate"
+                  (click)="removeOrganizationCode(i)"
+                ></button>
+              }
+            </div>
+          }
+          <button
+            pButton
+            type="button"
+            [label]="'auth.registration.addOrganization' | translate"
+            icon="pi pi-plus"
+            text
+            size="small"
+            class="align-self-start"
+            (click)="addOrganizationCode()"
+          ></button>
         </div>
 
         <div class="col-12 md:col-6 flex flex-column gap-2">

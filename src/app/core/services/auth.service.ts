@@ -5,7 +5,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from './supabase.service';
 import { LoadingService } from './loading.service';
 import { ToastService } from './toast.service';
-import { AppRole, Profile } from '../models/app.models';
+import { AppRole, Organization, Profile } from '../models/app.models';
+
+interface ProfileRow extends Profile {
+  organization_members?: { organization: Organization | null }[] | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -39,6 +43,11 @@ export class AuthService {
   });
   readonly initialized = computed(() => this.initializedState());
 
+  /** All organizations the current user belongs to (admin/employee can belong to several). */
+  readonly organizations = computed<Organization[]>(() => this.profileState()?.organizations ?? []);
+  /** The organization currently selected — every query/RLS check scopes to this one. */
+  readonly activeOrganization = computed<Organization | null>(() => this.profileState()?.active_organization ?? null);
+
   /** Landing route for the current user, by role precedence: platform admin > org admin > employee. */
   readonly homeRoute = computed<string>(() => {
     if (this.hasRole('platform_administrator')) {
@@ -64,13 +73,19 @@ export class AuthService {
     fullName: string;
     email: string;
     password: string;
-    organizationCode: string;
+    organizationCodes: string[];
     phoneNumber?: string;
     department?: string;
   }): Promise<void> {
     this.loadingService.start();
     try {
-      const organizationId = await this.resolveOrganizationCode(payload.organizationCode);
+      const codes = [...new Set(payload.organizationCodes.map((code) => code.trim()).filter(Boolean))];
+
+      if (codes.length === 0) {
+        throw new Error('At least one organization code is required.');
+      }
+
+      const organizationIds = await Promise.all(codes.map((code) => this.resolveOrganizationCode(code)));
 
       const normalizedEmail = payload.email.trim().toLowerCase();
       const { data, error } = await this.supabase.auth.signUp({
@@ -83,7 +98,7 @@ export class AuthService {
             department: payload.department?.trim() || null,
             role: 'employee',
             roles: ['employee'],
-            organization_id: organizationId
+            organization_ids: organizationIds
           }
         }
       });
@@ -179,18 +194,37 @@ export class AuthService {
 
     const { data, error } = await this.supabase
       .from('profiles')
-      .select('*')
+      .select('*, active_organization:organizations!active_organization_id(*), organization_members(organization:organizations(*))')
       .eq('id', user.id)
-      .single<Profile>();
+      .single<ProfileRow>();
 
     if (error) {
       throw error;
     }
 
+    const { organization_members, ...profile } = data;
+
     this.profileState.set({
-      ...data,
-      roles: this.resolveRoles(data)
+      ...profile,
+      roles: this.resolveRoles(profile),
+      organizations: (organization_members ?? []).map((member) => member.organization).filter((org): org is Organization => !!org)
     });
+  }
+
+  /** Switches the active organization and reloads so every page refetches under the new scope. */
+  async switchOrganization(organizationId: string): Promise<void> {
+    this.loadingService.start();
+    try {
+      const { error } = await this.supabase.rpc('switch_active_organization', { target_organization_id: organizationId });
+
+      if (error) {
+        throw error;
+      }
+
+      globalThis.location?.reload();
+    } finally {
+      this.loadingService.stop();
+    }
   }
 
   hasRole(role: AppRole): boolean {

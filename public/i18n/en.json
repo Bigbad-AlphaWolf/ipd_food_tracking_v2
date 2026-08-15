@@ -71,6 +71,7 @@
     "subtitle": "Meal operations",
     "navigation": "Navigation",
     "toggleTheme": "Toggle theme",
+    "switchOrganization": "Switch organization",
     "menu": {
       "dashboard": "Dashboard",
       "meals": "Meals",
@@ -120,8 +121,10 @@
       "phonePlaceholder": "+1 555 000 1111",
       "departmentLabel": "Department",
       "departmentPlaceholder": "Operations",
-      "organizationCodeLabel": "Organization code",
+      "organizationCodeLabel": "Organization code(s)",
       "organizationCodePlaceholder": "e.g. ACME",
+      "addOrganization": "Add another organization",
+      "removeOrganization": "Remove organization",
       "passwordLabel": "Password",
       "confirmPasswordLabel": "Confirm password",
       "passwordMismatch": "Passwords do not match.",
@@ -335,7 +338,8 @@
       "subtitle": "Your profile metadata comes from the Supabase profiles table.",
       "fullNameLabel": "Full name",
       "emailLabel": "Email",
-      "departmentLabel": "Department"
+      "departmentLabel": "Department",
+      "organizationsLabel": "Organizations"
     }
   },
   "platform": {
@@ -392,7 +396,8 @@
         "header": "User access",
         "nameLabel": "Name",
         "rolesLabel": "Roles",
-        "organizationLabel": "Organization",
+        "organizationLabel": "Organizations",
+        "organizationRequired": "Select at least one organization.",
         "activeAccountLabel": "Active account"
       },
       "toast": {

@@ -71,6 +71,7 @@
     "subtitle": "Gestion des repas",
     "navigation": "Navigation",
     "toggleTheme": "Changer de thème",
+    "switchOrganization": "Changer d'organisation",
     "menu": {
       "dashboard": "Tableau de bord",
       "meals": "Repas",
@@ -120,8 +121,10 @@
       "phonePlaceholder": "+33 6 12 34 56 78",
       "departmentLabel": "Département",
       "departmentPlaceholder": "Opérations",
-      "organizationCodeLabel": "Code d'organisation",
+      "organizationCodeLabel": "Code(s) d'organisation",
       "organizationCodePlaceholder": "ex. ACME",
+      "addOrganization": "Ajouter une autre organisation",
+      "removeOrganization": "Retirer l'organisation",
       "passwordLabel": "Mot de passe",
       "confirmPasswordLabel": "Confirmer le mot de passe",
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
@@ -335,7 +338,8 @@
       "subtitle": "Les métadonnées de votre profil proviennent de la table profiles de Supabase.",
       "fullNameLabel": "Nom complet",
       "emailLabel": "E-mail",
-      "departmentLabel": "Département"
+      "departmentLabel": "Département",
+      "organizationsLabel": "Organisations"
     }
   },
   "platform": {
@@ -392,7 +396,8 @@
         "header": "Accès utilisateur",
         "nameLabel": "Nom",
         "rolesLabel": "Rôles",
-        "organizationLabel": "Organisation",
+        "organizationLabel": "Organisations",
+        "organizationRequired": "Sélectionnez au moins une organisation.",
         "activeAccountLabel": "Compte actif"
       },
       "toast": {

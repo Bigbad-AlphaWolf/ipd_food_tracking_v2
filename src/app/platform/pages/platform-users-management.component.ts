@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { TableModule } from 'primeng/table';
@@ -90,7 +90,15 @@ import { AppRole, Organization, Profile, SelectOption } from '../../core/models/
         <tr>
           <td>{{ user.full_name }}</td>
           <td>{{ user.email }}</td>
-          <td>{{ user.organization?.name || ('platform.users.noOrganization' | translate) }}</td>
+          <td>
+            <div class="flex gap-1 flex-wrap">
+              @for (organization of user.organizations; track organization.id) {
+                <p-tag [value]="organization.name" severity="info"></p-tag>
+              } @empty {
+                {{ 'platform.users.noOrganization' | translate }}
+              }
+            </div>
+          </td>
           <td>
             <div class="flex gap-1 flex-wrap">
               @for (role of normalizeRoles(user); track role) {
@@ -137,13 +145,17 @@ import { AppRole, Organization, Profile, SelectOption } from '../../core/models/
         @if (!isPlatformAdminSelection()) {
           <div class="flex flex-column gap-2">
             <label>{{ 'platform.users.dialog.organizationLabel' | translate }}</label>
-            <p-select
+            <p-multiSelect
               [options]="organizationOptions()"
               optionLabel="label"
               optionValue="value"
-              formControlName="organizationId"
+              formControlName="organizationIds"
               appendTo="body"
-            ></p-select>
+              display="chip"
+            ></p-multiSelect>
+            @if (form.hasError('organizationRequired') && form.controls.organizationIds.touched) {
+              <small class="text-red-500">{{ 'platform.users.dialog.organizationRequired' | translate }}</small>
+            }
           </div>
         }
 
@@ -175,11 +187,14 @@ export class PlatformUsersManagementComponent {
   readonly organizations = signal<Organization[]>([]);
   readonly selectedUser = signal<Profile | null>(null);
 
-  readonly form = this.fb.nonNullable.group({
-    roles: [['employee'] as AppRole[], Validators.required],
-    organizationId: [null as string | null],
-    is_active: true
-  });
+  readonly form = this.fb.nonNullable.group(
+    {
+      roles: [['employee'] as AppRole[], Validators.required],
+      organizationIds: [[] as string[]],
+      is_active: true
+    },
+    { validators: this.organizationRequiredValidator }
+  );
 
   readonly isPlatformAdminSelection = computed(() => this.form.controls.roles.value.includes('platform_administrator'));
 
@@ -203,9 +218,20 @@ export class PlatformUsersManagementComponent {
 
     this.form.controls.roles.valueChanges.subscribe((roles) => {
       if (roles.includes('platform_administrator')) {
-        this.form.controls.organizationId.setValue(null);
+        this.form.controls.organizationIds.setValue([]);
       }
     });
+  }
+
+  private organizationRequiredValidator(control: AbstractControl): ValidationErrors | null {
+    const roles = (control.get('roles')?.value as AppRole[] | null) ?? [];
+
+    if (roles.includes('platform_administrator')) {
+      return null;
+    }
+
+    const organizationIds = (control.get('organizationIds')?.value as string[] | null) ?? [];
+    return organizationIds.length > 0 ? null : { organizationRequired: true };
   }
 
   setSearch(value: string): void {
@@ -246,7 +272,7 @@ export class PlatformUsersManagementComponent {
     this.selectedUser.set(user);
     this.form.reset({
       roles: this.normalizeRoles(user),
-      organizationId: user.organization_id,
+      organizationIds: (user.organizations ?? []).map((organization) => organization.id),
       is_active: user.is_active
     });
     this.dialogVisible.set(true);
@@ -265,7 +291,7 @@ export class PlatformUsersManagementComponent {
       const value = this.form.getRawValue();
       await this.platformService.updateUser(user.id, {
         roles: value.roles,
-        organizationId: value.organizationId,
+        organizationIds: value.organizationIds,
         isActive: value.is_active
       });
       this.toastService.success(

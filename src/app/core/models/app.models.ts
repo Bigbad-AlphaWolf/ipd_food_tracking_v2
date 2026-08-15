@@ -20,9 +20,15 @@ export interface Profile {
   department: string | null;
   role?: AppRole;
   roles?: AppRole[];
-  /** Null only for platform_administrator — every admin/employee belongs to exactly one organization. */
-  organization_id: string | null;
-  organization?: Organization;
+  /**
+   * Which of this user's organizations is currently selected. Null only for
+   * platform_administrator — everyone else must have one active org among
+   * their memberships (see `organizations`).
+   */
+  active_organization_id: string | null;
+  active_organization?: Organization;
+  /** All organizations this user belongs to (admin/employee can belong to several). */
+  organizations?: Organization[];
   is_active: boolean;
   created_at: string;
   updated_at: string;

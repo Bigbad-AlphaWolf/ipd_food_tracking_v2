@@ -70,7 +70,7 @@ export class AdminService {
       throw new Error('You must be authenticated to create or update surveys.');
     }
 
-    const organizationId = this.authService.profile()?.organization_id;
+    const organizationId = this.authService.profile()?.active_organization_id;
 
     if (!organizationId) {
       throw new Error('Your account is not assigned to an organization.');
