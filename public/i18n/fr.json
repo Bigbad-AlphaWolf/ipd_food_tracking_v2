@@ -74,6 +74,7 @@
     "navigation": "Navigation",
     "toggleTheme": "Changer de thème",
     "switchOrganization": "Changer d'organisation",
+    "organization": "Organisation",
     "menu": {
       "dashboard": "Tableau de bord",
       "meals": "Repas",
@@ -293,6 +294,8 @@
       "title": "Tableau de bord",
       "subtitle": "Votre activité de vote et les actions du jour.",
       "badge": "En direct",
+      "quickVoteTitle": "Votez maintenant",
+      "quickVoteSubtitle": "Choisissez un repas pour le sondage du jour et votez sans quitter le tableau de bord.",
       "todaySurveyTitle": "Sondage du jour",
       "hasOpenSurvey": "Un sondage est disponible pour le vote.",
       "noOpenSurvey": "Aucun sondage ouvert aujourd'hui.",

@@ -79,9 +79,13 @@ import { ForcePasswordChangeComponent } from '../auth/force-password-change.comp
 
           <div class="app-topbar-right">
             <div class="hidden md:flex align-items-center gap-2">
-              <div class="organization-switcher-slot">
-                <app-organization-switcher></app-organization-switcher>
-              </div>
+              @if (authService.organizations().length > 1) {
+                <div class="organization-switcher-slot">
+                  <app-organization-switcher></app-organization-switcher>
+                </div>
+              } @else if (authService.activeOrganization(); as organization) {
+                <p-tag [value]="organization.name" icon="pi pi-building" severity="secondary"></p-tag>
+              }
               <app-language-switcher></app-language-switcher>
               <p-tag [value]="roleLabel()" severity="contrast"></p-tag>
             </div>
@@ -151,6 +155,11 @@ import { ForcePasswordChangeComponent } from '../auth/force-password-change.comp
             <div class="flex flex-column gap-2">
               <span class="text-sm text-500">{{ 'shell.switchOrganization' | translate }}</span>
               <app-organization-switcher></app-organization-switcher>
+            </div>
+          } @else if (authService.activeOrganization(); as organization) {
+            <div class="flex align-items-center justify-content-between">
+              <span class="text-sm text-500">{{ 'shell.organization' | translate }}</span>
+              <p-tag [value]="organization.name" icon="pi pi-building" severity="secondary"></p-tag>
             </div>
           }
 

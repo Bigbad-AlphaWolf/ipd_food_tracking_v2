@@ -74,6 +74,7 @@
     "navigation": "Navigation",
     "toggleTheme": "Toggle theme",
     "switchOrganization": "Switch organization",
+    "organization": "Organization",
     "menu": {
       "dashboard": "Dashboard",
       "meals": "Meals",
@@ -293,6 +294,8 @@
       "title": "Dashboard",
       "subtitle": "Your meal voting activity and today's action items.",
       "badge": "Live",
+      "quickVoteTitle": "Vote now",
+      "quickVoteSubtitle": "Pick a meal for today’s survey and submit your vote without leaving the dashboard.",
       "todaySurveyTitle": "Today's survey",
       "hasOpenSurvey": "A survey is available for voting.",
       "noOpenSurvey": "No open survey for today.",
