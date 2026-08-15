@@ -7,7 +7,8 @@
       "logout": "Se déconnecter",
       "cancel": "Annuler",
       "save": "Enregistrer",
-      "clear": "Effacer"
+      "clear": "Effacer",
+      "close": "Fermer"
     },
     "filters": {
       "month": "Mois",
@@ -63,22 +64,29 @@
     }
   },
   "roles": {
-    "admin": "Administrateur",
-    "employee": "Employé"
+    "admin": "Administrateur d'organisation",
+    "employee": "Employé",
+    "platform_administrator": "Administrateur de la plateforme",
+    "meal_coordinator": "Coordinateur des repas"
   },
   "shell": {
     "subtitle": "Gestion des repas",
     "navigation": "Navigation",
     "toggleTheme": "Changer de thème",
+    "switchOrganization": "Changer d'organisation",
+    "organization": "Organisation",
     "menu": {
       "dashboard": "Tableau de bord",
       "meals": "Repas",
-      "surveys": "Sondages",
+      "surveys": "Menus",
       "users": "Utilisateurs",
       "reports": "Rapports",
-      "todaySurvey": "Sondage du jour",
+      "todaySurvey": "Menu du jour",
       "history": "Mon historique",
-      "profile": "Profil"
+      "profile": "Profil",
+      "organizations": "Organisations",
+      "allUsers": "Tous les utilisateurs",
+      "mealCounts": "Comptage des repas"
     }
   },
   "auth": {
@@ -90,7 +98,7 @@
     },
     "login": {
       "heroTitle": "Le vote quotidien des repas sans la lourdeur des feuilles de calcul.",
-      "heroBody": "Les employés votent une fois par jour. Les administrateurs gèrent les menus, les sondages, les rapports et l'adoption.",
+      "heroBody": "Les employés votent une fois par jour. Les administrateurs gèrent les repas, les menus, les rapports et l'adoption.",
       "mobileFirstTitle": "Pensé pour le mobile",
       "mobileFirstBody": "Des parcours de vote rapides optimisés pour les téléphones et les tablettes.",
       "reportsTitle": "Rapports exploitables",
@@ -117,11 +125,32 @@
       "phonePlaceholder": "+33 6 12 34 56 78",
       "departmentLabel": "Département",
       "departmentPlaceholder": "Opérations",
+      "organizationCodeLabel": "Code(s) d'organisation",
+      "organizationCodePlaceholder": "ex. ACME",
+      "addOrganization": "Ajouter une autre organisation",
+      "removeOrganization": "Retirer l'organisation",
       "passwordLabel": "Mot de passe",
       "confirmPasswordLabel": "Confirmer le mot de passe",
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "submit": "Créer un compte employé",
       "backToLogin": "Retour à la connexion"
+    },
+    "forcePasswordChange": {
+      "title": "Définissez un nouveau mot de passe",
+      "subtitle": "Votre compte a été créé avec un mot de passe temporaire. Choisissez un nouveau mot de passe pour continuer.",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "confirmPasswordLabel": "Confirmer le nouveau mot de passe",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "submit": "Définir le mot de passe",
+      "toast": {
+        "successTitle": "Mot de passe mis à jour",
+        "successBody": "Votre mot de passe a été modifié.",
+        "failureTitle": "Impossible de mettre à jour le mot de passe",
+        "failureBody": "Impossible de définir votre nouveau mot de passe. Veuillez réessayer.",
+        "samePasswordTitle": "Mot de passe identique",
+        "samePasswordBody": "Choisissez un mot de passe différent de votre mot de passe temporaire."
+      },
+      "samePassword": "Votre nouveau mot de passe doit être différent du mot de passe temporaire."
     }
   },
   "admin": {
@@ -155,7 +184,7 @@
         "created": "Créé le",
         "actions": "Actions"
       },
-      "deleteConfirm": "Supprimer ce repas ? Les relations de sondage existantes doivent d'abord être nettoyées.",
+      "deleteConfirm": "Supprimer ce repas ? Les relations de menu existantes doivent d'abord être nettoyées.",
       "dialog": {
         "header": "Repas",
         "nameLabel": "Nom",
@@ -176,9 +205,9 @@
       }
     },
     "surveys": {
-      "title": "Gestion des sondages",
-      "subtitle": "Créez des sondages datés, associez des repas et changez leur statut.",
-      "newSurvey": "Nouveau sondage",
+      "title": "Gestion des menus",
+      "subtitle": "Créez des menus datés, associez des repas et changez leur statut.",
+      "newSurvey": "Nouveau menu",
       "table": {
         "date": "Date",
         "status": "Statut",
@@ -186,28 +215,28 @@
         "actions": "Actions"
       },
       "noMealsAssigned": "Aucun repas assigné",
-      "deleteConfirm": "Supprimer ce sondage et toutes les associations de repas correspondantes ?",
+      "deleteConfirm": "Supprimer ce menu et toutes les associations de repas correspondantes ?",
       "dialog": {
-        "header": "Sondage",
-        "dateLabel": "Date du sondage",
+        "header": "Menu",
+        "dateLabel": "Date du menu",
         "statusLabel": "Statut",
         "mealsLabel": "Repas"
       },
       "toast": {
-        "updatedTitle": "Sondage mis à jour",
-        "updatedBody": "Sondage marqué comme {{status}}.",
-        "savedTitle": "Sondage enregistré",
-        "savedBody": "La planification du sondage a été mise à jour.",
+        "updatedTitle": "Menu mis à jour",
+        "updatedBody": "Menu marqué comme {{status}}.",
+        "savedTitle": "Menu enregistré",
+        "savedBody": "La planification du menu a été mise à jour.",
         "saveFailedTitle": "Échec de l'enregistrement",
-        "saveFailedBody": "Impossible d'enregistrer ce sondage.",
-        "deletedTitle": "Sondage supprimé",
-        "deletedBody": "Le sondage a été retiré.",
+        "saveFailedBody": "Impossible d'enregistrer ce menu.",
+        "deletedTitle": "Menu supprimé",
+        "deletedBody": "Le menu a été retiré.",
         "deleteFailedTitle": "Échec de la suppression",
-        "deleteFailedBody": "Impossible de supprimer ce sondage.",
+        "deleteFailedBody": "Impossible de supprimer ce menu.",
         "statusUpdateFailedTitle": "Échec de la mise à jour du statut",
-        "statusUpdateFailedBody": "Impossible de mettre à jour le statut du sondage.",
-        "unavailableTitle": "Sondages indisponibles",
-        "unavailableBody": "Impossible de charger la configuration des sondages."
+        "statusUpdateFailedBody": "Impossible de mettre à jour le statut du menu.",
+        "unavailableTitle": "Menus indisponibles",
+        "unavailableBody": "Impossible de charger la configuration du menu."
       }
     },
     "users": {
@@ -265,9 +294,11 @@
       "title": "Tableau de bord",
       "subtitle": "Votre activité de vote et les actions du jour.",
       "badge": "En direct",
-      "todaySurveyTitle": "Sondage du jour",
-      "hasOpenSurvey": "Un sondage est disponible pour le vote.",
-      "noOpenSurvey": "Aucun sondage ouvert aujourd'hui.",
+      "quickVoteTitle": "Votez maintenant",
+      "quickVoteSubtitle": "Choisissez un repas pour le menu du jour et votez sans quitter le tableau de bord.",
+      "todaySurveyTitle": "Menu du jour",
+      "hasOpenSurvey": "Un menu est disponible pour le vote.",
+      "noOpenSurvey": "Aucun menu ouvert aujourd'hui.",
       "monthTitle": "Ce mois-ci",
       "monthBody": "{{count}} repas choisis jusqu'à présent.",
       "lastMealTitle": "Dernier repas sélectionné",
@@ -277,7 +308,7 @@
       "canVote": "Vous pouvez encore voter aujourd'hui.",
       "quickActionsTitle": "Actions rapides",
       "quickActionsBody": "Accédez au vote ou consultez votre historique mensuel.",
-      "openSurveyAction": "Ouvrir le sondage du jour",
+      "openSurveyAction": "Ouvrir le menu du jour",
       "viewHistoryAction": "Voir mon historique",
       "toast": {
         "unavailableTitle": "Tableau de bord indisponible",
@@ -285,12 +316,12 @@
       }
     },
     "todaySurvey": {
-      "title": "Sondage du jour",
-      "subtitle": "Les sondages ouverts apparaissent ici avec les choix de repas et le statut du vote.",
+      "title": "Menu du jour",
+      "subtitle": "Les menus ouverts apparaissent ici avec les choix de repas et le statut du vote.",
       "badge": "Vote unique",
-      "loading": "Chargement du sondage du jour...",
-      "emptyTitle": "Aucun sondage aujourd'hui",
-      "emptyMessage": "Il n'y a pas encore de sondage ouvert pour aujourd'hui.",
+      "loading": "Chargement du menu du jour...",
+      "emptyTitle": "Aucun menu aujourd'hui",
+      "emptyMessage": "Il n'y a pas encore de menu ouvert pour aujourd'hui.",
       "noDescription": "Aucune description fournie.",
       "selectedTag": "Sélectionné",
       "chooseMeal": "Choisir ce repas",
@@ -303,8 +334,8 @@
         "votedBody": "Votre choix de repas a été enregistré pour aujourd'hui.",
         "voteFailedTitle": "Échec du vote",
         "voteFailedBody": "Impossible de soumettre votre vote. Si vous avez déjà voté, l'enregistrement reste inchangé.",
-        "unavailableTitle": "Sondage indisponible",
-        "unavailableBody": "Impossible de charger le sondage du jour."
+        "unavailableTitle": "Menu indisponible",
+        "unavailableBody": "Impossible de charger le menu du jour."
       }
     },
     "history": {
@@ -313,7 +344,7 @@
       "badge": "Par mois",
       "searchPlaceholder": "Rechercher par nom de repas",
       "table": {
-        "surveyDate": "Date du sondage",
+        "surveyDate": "Date du menu",
         "meal": "Repas",
         "votedAt": "Voté le",
         "status": "Statut"
@@ -330,7 +361,145 @@
       "subtitle": "Les métadonnées de votre profil proviennent de la table profiles de Supabase.",
       "fullNameLabel": "Nom complet",
       "emailLabel": "E-mail",
-      "departmentLabel": "Département"
+      "departmentLabel": "Département",
+      "organizationsLabel": "Organisations"
+    }
+  },
+  "platform": {
+    "eyebrow": "Plateforme",
+    "organizations": {
+      "title": "Organisations",
+      "subtitle": "Créez et gérez toutes les organisations de la plateforme.",
+      "newOrganization": "Nouvelle organisation",
+      "table": {
+        "name": "Nom",
+        "code": "Code",
+        "description": "Description",
+        "status": "Statut",
+        "created": "Créée le",
+        "actions": "Actions"
+      },
+      "deleteConfirm": "Supprimer cette organisation ? Cela échouera si des utilisateurs ou des menus y font encore référence.",
+      "dialog": {
+        "header": "Organisation",
+        "nameLabel": "Nom",
+        "codeLabel": "Code",
+        "codePlaceholder": "ex. ACME",
+        "descriptionLabel": "Description",
+        "activeLabel": "Organisation active"
+      },
+      "toast": {
+        "savedTitle": "Organisation enregistrée",
+        "savedBody": "L'organisation a été mise à jour.",
+        "saveFailedTitle": "Échec de l'enregistrement",
+        "saveFailedBody": "Impossible d'enregistrer cette organisation. Le code est peut-être déjà utilisé.",
+        "deletedTitle": "Organisation supprimée",
+        "deletedBody": "L'organisation a été retirée.",
+        "deleteFailedTitle": "Échec de la suppression",
+        "deleteFailedBody": "Impossible de supprimer cette organisation tant qu'elle a des utilisateurs ou des menus.",
+        "unavailableTitle": "Organisations indisponibles",
+        "unavailableBody": "Impossible de charger les organisations."
+      }
+    },
+    "users": {
+      "title": "Tous les utilisateurs",
+      "subtitle": "Utilisateurs et rôles de toutes les organisations.",
+      "searchPlaceholder": "Rechercher des utilisateurs",
+      "organizationFilterPlaceholder": "Toutes les organisations",
+      "noOrganization": "Aucune organisation",
+      "table": {
+        "name": "Nom",
+        "email": "E-mail",
+        "organization": "Organisation",
+        "role": "Rôle",
+        "status": "Statut",
+        "action": "Action"
+      },
+      "dialog": {
+        "header": "Accès utilisateur",
+        "nameLabel": "Nom",
+        "rolesLabel": "Rôles",
+        "organizationLabel": "Organisations",
+        "organizationRequired": "Sélectionnez au moins une organisation.",
+        "activeAccountLabel": "Compte actif"
+      },
+      "toast": {
+        "updatedTitle": "Utilisateur mis à jour",
+        "updatedBody": "Les rôles et l'organisation ont été enregistrés.",
+        "updateFailedTitle": "Échec de la mise à jour",
+        "updateFailedBody": "Impossible de mettre à jour cet utilisateur.",
+        "unavailableTitle": "Utilisateurs indisponibles",
+        "unavailableBody": "Impossible de charger les utilisateurs."
+      }
+    },
+    "surveys": {
+      "title": "Gestion des menus",
+      "subtitle": "Créez des menus datés pour toutes les organisations, associez des repas et changez leur statut.",
+      "newSurvey": "Nouveau menu",
+      "organizationFilterPlaceholder": "Toutes les organisations",
+      "table": {
+        "organization": "Organisation"
+      },
+      "dialog": {
+        "organizationLabel": "Organisation"
+      }
+    },
+    "reports": {
+      "organizationFilterPlaceholder": "Toutes les organisations"
+    }
+  },
+  "kitchen": {
+    "eyebrow": "Cuisine",
+    "dashboard": {
+      "title": "Comptage quotidien des repas",
+      "subtitle": "Consultez le nombre d'employés ayant sélectionné chaque repas pour un jour de menu donné.",
+      "dateLabel": "Date du menu",
+      "emptyTitle": "Aucun menu pour cette date",
+      "emptyMessage": "Aucun menu n'est prévu à la date sélectionnée dans votre organisation active.",
+      "table": {
+        "meal": "Repas",
+        "count": "Sélections",
+        "total": "Total"
+      },
+      "toast": {
+        "unavailableTitle": "Comptage des repas indisponible",
+        "unavailableBody": "Impossible de charger le comptage des repas pour cette date."
+      }
+    }
+  },
+  "shared": {
+    "createUser": {
+      "newUser": "Nouvel utilisateur",
+      "header": "Créer un utilisateur",
+      "fullNameLabel": "Nom complet",
+      "emailLabel": "E-mail",
+      "departmentLabel": "Département",
+      "phoneLabel": "Numéro de téléphone",
+      "rolesLabel": "Rôles",
+      "organizationLabel": "Organisations",
+      "organizationRequired": "Sélectionnez au moins une organisation.",
+      "generatePasswordLabel": "Générer automatiquement un mot de passe temporaire",
+      "temporaryPasswordLabel": "Mot de passe temporaire",
+      "confirmPasswordLabel": "Confirmer le mot de passe",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "regenerate": "Regénérer",
+      "submit": "Créer l'utilisateur",
+      "toast": {
+        "createdTitle": "Utilisateur créé",
+        "createdBody": "Partagez le mot de passe temporaire avec l'utilisateur — il devra en définir un nouveau dès sa première connexion.",
+        "createFailedTitle": "Impossible de créer l'utilisateur",
+        "createFailedBody": "Impossible de créer cet utilisateur. Vérifiez l'e-mail et réessayez."
+      }
+    },
+    "userCredentials": {
+      "header": "Utilisateur créé",
+      "body": "Partagez ces identifiants avec le nouvel utilisateur. Il devra définir un nouveau mot de passe lors de sa première connexion.",
+      "emailLabel": "E-mail",
+      "passwordLabel": "Mot de passe temporaire",
+      "toast": {
+        "copiedTitle": "Copié",
+        "copiedBody": "Copié dans le presse-papiers."
+      }
     }
   }
 }

@@ -1,6 +1,16 @@
-export type AppRole = 'admin' | 'employee';
+export type AppRole = 'admin' | 'employee' | 'platform_administrator' | 'meal_coordinator';
 
 export type SurveyStatus = 'draft' | 'open' | 'closed';
+
+export interface Organization {
+  id: string;
+  name: string;
+  description: string | null;
+  code: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Profile {
   id: string;
@@ -10,7 +20,18 @@ export interface Profile {
   department: string | null;
   role?: AppRole;
   roles?: AppRole[];
+  /**
+   * Which of this user's organizations is currently selected. Null only for
+   * platform_administrator — everyone else must have one active org among
+   * their memberships (see `organizations`).
+   */
+  active_organization_id: string | null;
+  active_organization?: Organization;
+  /** All organizations this user belongs to (admin/employee can belong to several). */
+  organizations?: Organization[];
   is_active: boolean;
+  /** True right after an admin-provisioned account's first login, until the user sets their own password. */
+  must_change_password: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -29,6 +50,9 @@ export interface DailySurvey {
   status: SurveyStatus;
   created_by: string;
   created_at: string;
+  /** Present when the row is loaded org-scoped (e.g. by a platform administrator across organizations). */
+  organization_id?: string;
+  organization?: Organization;
   survey_meals?: SurveyMeal[];
 }
 
@@ -114,4 +138,30 @@ export interface SurveyUpsertPayload {
   survey_date: string;
   status: SurveyStatus;
   mealIds: string[];
+}
+
+/** A platform administrator has no active organization of their own, so they must pick one explicitly. */
+export interface PlatformSurveyUpsertPayload extends SurveyUpsertPayload {
+  organizationId: string;
+}
+
+/** Per-meal vote count for one survey day — aggregate only, no individual employee/vote data. */
+export interface MealVoteCount {
+  survey_id: string;
+  survey_status: SurveyStatus;
+  meal_id: string;
+  meal_name: string;
+  vote_count: number;
+}
+
+/** Provisions a brand-new user (via the admin-create-user edge function) with a temporary password. */
+export interface CreateUserPayload {
+  email: string;
+  fullName: string;
+  password: string;
+  roles: AppRole[];
+  /** Ignored server-side when roles includes platform_administrator. */
+  organizationIds: string[];
+  department?: string;
+  phoneNumber?: string;
 }

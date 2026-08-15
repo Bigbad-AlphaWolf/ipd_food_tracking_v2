@@ -11,6 +11,8 @@ import { LoadingService } from '../core/services/loading.service';
 import { LanguageSwitcherComponent } from '../shared/components/language-switcher.component';
 import { LoadingSpinnerComponent } from '../shared/components/loading-spinner.component';
 
+const MIN_ORGANIZATION_CODES = 1;
+
 @Component({
   selector: 'app-employee-registration',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +40,10 @@ export class EmployeeRegistrationComponent {
     {
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
+      organizationCodes: this.fb.nonNullable.array(
+        [this.fb.nonNullable.control('', [Validators.required, Validators.minLength(2)])],
+        Validators.minLength(MIN_ORGANIZATION_CODES)
+      ),
       phoneNumber: [''],
       department: [''],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -45,6 +51,22 @@ export class EmployeeRegistrationComponent {
     },
     { validators: this.passwordsMatchValidator }
   );
+
+  get organizationCodes() {
+    return this.form.controls.organizationCodes;
+  }
+
+  addOrganizationCode(): void {
+    this.organizationCodes.push(this.fb.nonNullable.control('', [Validators.required, Validators.minLength(2)]));
+  }
+
+  removeOrganizationCode(index: number): void {
+    if (this.organizationCodes.length <= MIN_ORGANIZATION_CODES) {
+      return;
+    }
+
+    this.organizationCodes.removeAt(index);
+  }
 
   async submit(): Promise<void> {
     if (this.form.invalid) {
@@ -57,6 +79,7 @@ export class EmployeeRegistrationComponent {
       fullName: value.fullName,
       email: value.email,
       password: value.password,
+      organizationCodes: value.organizationCodes,
       phoneNumber: value.phoneNumber,
       department: value.department
     });

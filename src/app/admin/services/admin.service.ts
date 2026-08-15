@@ -1,8 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import * as XLSX from 'xlsx';
 import { SupabaseService } from '../../core/services/supabase.service';
+import { AuthService } from '../../core/services/auth.service';
+import { exportMonthlyReportCsv, exportMonthlyReportExcel } from '../../core/utils/monthly-report-export.util';
+import { resolveEdgeFunctionError } from '../../core/utils/edge-function-error.util';
 import {
   AdminDashboardMetrics,
+  CreateUserPayload,
   DailySurvey,
   Meal,
   MonthlyReportRow,
@@ -14,6 +17,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class AdminService {
   private readonly supabase = inject(SupabaseService).client;
+  private readonly authService = inject(AuthService);
 
   async getMeals(): Promise<Meal[]> {
     const { data, error } = await this.supabase.from('meals').select('*').order('created_at', { ascending: false });
@@ -68,11 +72,18 @@ export class AdminService {
       throw new Error('You must be authenticated to create or update surveys.');
     }
 
+    const organizationId = this.authService.profile()?.active_organization_id;
+
+    if (!organizationId) {
+      throw new Error('Your account is not assigned to an organization.');
+    }
+
     const surveyData = {
       id: payload.id,
       survey_date: payload.survey_date,
       status: payload.status,
-      created_by: user.id
+      created_by: user.id,
+      organization_id: organizationId
     };
 
     const { data, error } = await this.supabase.from('daily_surveys').upsert(surveyData).select('id').single<{ id: string }>();
@@ -112,6 +123,26 @@ export class AdminService {
     if (error) {
       throw error;
     }
+  }
+
+  /**
+   * Provisions a brand-new user with a temporary password via the
+   * admin-create-user edge function (needs the service-role key, so it can't
+   * be done from the client directly). The new user must change their
+   * password on first login (see must_change_password). The edge function
+   * enforces that an org admin may only grant employee/admin/meal_coordinator
+   * and only within organizations they themselves belong to.
+   */
+  async createUser(payload: CreateUserPayload): Promise<{ id: string }> {
+    const { data, error } = await this.supabase.functions.invoke<{ id: string }>('admin-create-user', {
+      body: payload
+    });
+
+    if (error) {
+      throw await resolveEdgeFunctionError(error);
+    }
+
+    return { id: data!.id };
   }
 
   async getUsers(search = ''): Promise<Profile[]> {
@@ -185,29 +216,10 @@ export class AdminService {
   }
 
   exportCsv(rows: MonthlyReportRow[], filename: string): void {
-    const headers = ['Employee', 'Email', 'Department', 'Month', 'Total Votes', 'Favorite Meal'];
-    const values = rows.map((row) => [row.employeeName, row.email, row.department, row.month, row.totalVotes, row.favoriteMeal]);
-    const csv = [headers, ...values]
-      .map((line) => line.map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`).join(','))
-      .join('\n');
-
-    this.downloadBlob(new Blob([csv], { type: 'text/csv;charset=utf-8' }), `${filename}.csv`);
+    exportMonthlyReportCsv(rows, filename);
   }
 
   exportExcel(rows: MonthlyReportRow[], filename: string): void {
-    const worksheet = XLSX.utils.json_to_sheet(rows);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
-    const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    this.downloadBlob(new Blob([buffer], { type: 'application/octet-stream' }), `${filename}.xlsx`);
-  }
-
-  private downloadBlob(blob: Blob, filename: string): void {
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    link.click();
-    window.URL.revokeObjectURL(url);
+    exportMonthlyReportExcel(rows, filename);
   }
 }

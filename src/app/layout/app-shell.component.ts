@@ -14,6 +14,8 @@ import { ThemeService } from '../core/services/theme.service';
 import { LoadingService } from '../core/services/loading.service';
 import { LoadingSpinnerComponent } from '../shared/components/loading-spinner.component';
 import { LanguageSwitcherComponent } from '../shared/components/language-switcher.component';
+import { OrganizationSwitcherComponent } from '../shared/components/organization-switcher.component';
+import { ForcePasswordChangeComponent } from '../auth/force-password-change.component';
 
 @Component({
   selector: 'app-shell',
@@ -31,12 +33,17 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
     ToastModule,
     ConfirmDialogModule,
     LanguageSwitcherComponent,
-    LoadingSpinnerComponent
+    OrganizationSwitcherComponent,
+    LoadingSpinnerComponent,
+    ForcePasswordChangeComponent
   ],
   template: `
     <p-toast position="top-right"></p-toast>
     <p-confirmDialog></p-confirmDialog>
 
+    @if (authService.profile()?.must_change_password) {
+      <app-force-password-change></app-force-password-change>
+    } @else {
     <div class="shell-layout min-h-screen">
       <header class="app-topbar">
         <div class="app-topbar-inner">
@@ -72,6 +79,13 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
 
           <div class="app-topbar-right">
             <div class="hidden md:flex align-items-center gap-2">
+              @if (authService.organizations().length > 1) {
+                <div class="organization-switcher-slot">
+                  <app-organization-switcher></app-organization-switcher>
+                </div>
+              } @else if (authService.activeOrganization(); as organization) {
+                <p-tag [value]="organization.name" icon="pi pi-building" severity="secondary"></p-tag>
+              }
               <app-language-switcher></app-language-switcher>
               <p-tag [value]="roleLabel()" severity="contrast"></p-tag>
             </div>
@@ -87,7 +101,7 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
               (click)="themeService.toggle()"
             ></button>
 
-            <a routerLink="/employee/profile" class="app-avatar-link" [attr.aria-label]="'shell.menu.profile' | translate">
+            <a [routerLink]="profileRoute()" class="app-avatar-link" [attr.aria-label]="'shell.menu.profile' | translate">
               <p-avatar [label]="initials()" shape="circle" size="large"></p-avatar>
             </a>
 
@@ -137,6 +151,18 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
             <p-tag [value]="roleLabel()" severity="contrast"></p-tag>
           </div>
 
+          @if (authService.organizations().length > 1) {
+            <div class="flex flex-column gap-2">
+              <span class="text-sm text-500">{{ 'shell.switchOrganization' | translate }}</span>
+              <app-organization-switcher></app-organization-switcher>
+            </div>
+          } @else if (authService.activeOrganization(); as organization) {
+            <div class="flex align-items-center justify-content-between">
+              <span class="text-sm text-500">{{ 'shell.organization' | translate }}</span>
+              <p-tag [value]="organization.name" icon="pi pi-building" severity="secondary"></p-tag>
+            </div>
+          }
+
           <div class="flex align-items-center justify-content-between">
             <app-language-switcher></app-language-switcher>
             <button
@@ -171,6 +197,7 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
         <app-loading-spinner [overlay]="true"></app-loading-spinner>
       }
     </div>
+    }
   `,
   styles: [
     `
@@ -317,6 +344,10 @@ import { LanguageSwitcherComponent } from '../shared/components/language-switche
         display: inline-flex;
         border-radius: 50%;
       }
+
+      .organization-switcher-slot {
+        width: 12rem;
+      }
     `
   ]
 })
@@ -348,30 +379,65 @@ export class AppShellComponent {
     return roles.map((role) => this.translateService.instant(`roles.${role}`)).join(', ');
   });
 
+  /** The shared ProfileComponent is mounted under /employee, /platform, and /kitchen, guarded per-role. */
+  readonly profileRoute = computed(() => {
+    if (this.authService.hasRole('platform_administrator')) {
+      return '/platform/profile';
+    }
+
+    if (!this.authService.hasAnyRole(['admin', 'employee']) && this.authService.hasRole('meal_coordinator')) {
+      return '/kitchen/profile';
+    }
+
+    return '/employee/profile';
+  });
+
   readonly menuItems = computed<MenuItem[]>(() => {
     this.translateService.currentLang();
-    const hasAdminRole = this.authService.hasRole('admin');
+
+    if (this.authService.hasRole('platform_administrator')) {
+      return [
+        { label: this.translateService.instant('shell.menu.organizations'), icon: 'pi pi-building', routerLink: '/platform/organizations' },
+        { label: this.translateService.instant('shell.menu.allUsers'), icon: 'pi pi-users', routerLink: '/platform/users' },
+        { label: this.translateService.instant('shell.menu.meals'), icon: 'pi pi-apple', routerLink: '/platform/meals' },
+        { label: this.translateService.instant('shell.menu.surveys'), icon: 'pi pi-calendar', routerLink: '/platform/surveys' },
+        { label: this.translateService.instant('shell.menu.reports'), icon: 'pi pi-file-export', routerLink: '/platform/reports' },
+        { label: this.translateService.instant('shell.menu.profile'), icon: 'pi pi-user', routerLink: '/platform/profile' }
+      ];
+    }
+
     const common: MenuItem[] = [
-      { label: this.translateService.instant('shell.menu.profile'), icon: 'pi pi-user', routerLink: '/employee/profile' }
+      { label: this.translateService.instant('shell.menu.profile'), icon: 'pi pi-user', routerLink: this.profileRoute() }
     ];
 
-    if (hasAdminRole) {
+    const kitchenItems: MenuItem[] = this.authService.hasRole('meal_coordinator')
+      ? [{ label: this.translateService.instant('shell.menu.mealCounts'), icon: 'pi pi-clipboard', routerLink: '/kitchen/dashboard' }]
+      : [];
+
+    if (this.authService.hasRole('admin')) {
       return [
         { label: this.translateService.instant('shell.menu.dashboard'), icon: 'pi pi-chart-bar', routerLink: '/admin/dashboard' },
         { label: this.translateService.instant('shell.menu.meals'), icon: 'pi pi-apple', routerLink: '/admin/meals' },
         { label: this.translateService.instant('shell.menu.surveys'), icon: 'pi pi-calendar', routerLink: '/admin/surveys' },
         { label: this.translateService.instant('shell.menu.users'), icon: 'pi pi-users', routerLink: '/admin/users' },
         { label: this.translateService.instant('shell.menu.reports'), icon: 'pi pi-file-export', routerLink: '/admin/reports' },
+        ...kitchenItems,
         ...common
       ];
     }
 
-    return [
-      { label: this.translateService.instant('shell.menu.dashboard'), icon: 'pi pi-home', routerLink: '/employee/dashboard' },
-      { label: this.translateService.instant('shell.menu.todaySurvey'), icon: 'pi pi-megaphone', routerLink: '/employee/today-survey' },
-      { label: this.translateService.instant('shell.menu.history'), icon: 'pi pi-history', routerLink: '/employee/history' },
-      ...common
-    ];
+    if (this.authService.hasRole('employee')) {
+      return [
+        { label: this.translateService.instant('shell.menu.dashboard'), icon: 'pi pi-home', routerLink: '/employee/dashboard' },
+        { label: this.translateService.instant('shell.menu.todaySurvey'), icon: 'pi pi-megaphone', routerLink: '/employee/today-survey' },
+        { label: this.translateService.instant('shell.menu.history'), icon: 'pi pi-history', routerLink: '/employee/history' },
+        ...kitchenItems,
+        ...common
+      ];
+    }
+
+    // meal_coordinator with no other role — kitchen dashboard is their whole app.
+    return [...kitchenItems, ...common];
   });
 
   async logout(): Promise<void> {

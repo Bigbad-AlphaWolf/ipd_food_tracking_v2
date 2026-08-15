@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -7,12 +7,13 @@ import { RouterLink } from '@angular/router';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { EmployeeService } from '../services/employee.service';
 import { ToastService } from '../../core/services/toast.service';
-import { EmployeeDashboardSummary } from '../../core/models/app.models';
+import { DailySurvey, EmployeeDashboardSummary } from '../../core/models/app.models';
+import { TodaySurveyVoteCardComponent } from '../components/today-survey-vote-card.component';
 
 @Component({
   selector: 'app-employee-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, CardModule, ButtonModule, SkeletonModule, RouterLink, PageHeaderComponent],
+  imports: [TranslatePipe, CardModule, ButtonModule, SkeletonModule, RouterLink, PageHeaderComponent, TodaySurveyVoteCardComponent],
   template: `
     <app-page-header
       [eyebrow]="'employee.eyebrow' | translate"
@@ -20,6 +21,19 @@ import { EmployeeDashboardSummary } from '../../core/models/app.models';
       [subtitle]="'employee.dashboard.subtitle' | translate"
       [badge]="'employee.dashboard.badge' | translate"
     ></app-page-header>
+
+    @if (!loading() && survey()) {
+      <p-card styleClass="mb-4">
+        <h3 class="mt-0 mb-1">{{ 'employee.dashboard.quickVoteTitle' | translate }}</h3>
+        <p class="mt-0 mb-4 text-600">{{ 'employee.dashboard.quickVoteSubtitle' | translate }}</p>
+        <app-today-survey-vote-card
+          [survey]="survey()!"
+          [selectedMealId]="selectedMealId()"
+          [submitting]="voting()"
+          (voted)="vote($event)"
+        ></app-today-survey-vote-card>
+      </p-card>
+    }
 
     <div class="grid">
       <div class="col-12 md:col-6 xl:col-3">
@@ -91,6 +105,9 @@ export class EmployeeDashboardComponent {
   private readonly translateService = inject(TranslateService);
 
   readonly loading = signal(true);
+  readonly voting = signal(false);
+  readonly survey = signal<DailySurvey | null>(null);
+  readonly selectedMealId = signal<string | null>(null);
   readonly summary = signal<EmployeeDashboardSummary>({
     hasOpenSurvey: false,
     hasVotedToday: false,
@@ -102,12 +119,50 @@ export class EmployeeDashboardComponent {
     void this.load();
   }
 
+  async vote(mealId: string): Promise<void> {
+    const survey = this.survey();
+
+    if (!survey) {
+      return;
+    }
+
+    this.voting.set(true);
+
+    try {
+      await this.employeeService.submitVote(survey.id, mealId);
+      this.selectedMealId.set(mealId);
+
+      const mealName = survey.survey_meals?.find((surveyMeal) => surveyMeal.meal_id === mealId)?.meal?.name;
+      this.summary.update((summary) => ({
+        ...summary,
+        hasVotedToday: true,
+        monthVoteCount: summary.monthVoteCount + 1,
+        lastMealName: mealName ?? summary.lastMealName
+      }));
+      this.toastService.success(
+        this.translateService.instant('employee.todaySurvey.toast.votedTitle'),
+        this.translateService.instant('employee.todaySurvey.toast.votedBody')
+      );
+    } catch (error) {
+      console.error(error);
+      this.toastService.error(
+        this.translateService.instant('employee.todaySurvey.toast.voteFailedTitle'),
+        this.translateService.instant('employee.todaySurvey.toast.voteFailedBody')
+      );
+    } finally {
+      this.voting.set(false);
+    }
+  }
+
   private async load(): Promise<void> {
     this.loading.set(true);
 
     try {
       const now = new Date();
-      this.summary.set(await this.employeeService.getDashboardSummary(now.getMonth() + 1, now.getFullYear()));
+      const { summary, survey, selectedMealId } = await this.employeeService.getDashboardData(now.getMonth() + 1, now.getFullYear());
+      this.summary.set(summary);
+      this.survey.set(survey);
+      this.selectedMealId.set(selectedMealId);
     } catch (error) {
       console.error(error);
       this.toastService.error(

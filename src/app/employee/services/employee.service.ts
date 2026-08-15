@@ -91,17 +91,26 @@ export class EmployeeService {
     }));
   }
 
-  async getDashboardSummary(month: number, year: number): Promise<EmployeeDashboardSummary> {
-    const [{ survey, selectedMealId }, history] = await Promise.all([
-      this.getTodaySurvey(),
-      this.getHistory(month, year)
-    ]);
+  /**
+   * Everything the employee dashboard needs in one round trip: the KPI
+   * summary plus the raw survey/vote so it can render the quick-vote card
+   * without fetching today's survey a second time.
+   */
+  async getDashboardData(
+    month: number,
+    year: number
+  ): Promise<{ summary: EmployeeDashboardSummary; survey: DailySurvey | null; selectedMealId: string | null }> {
+    const [{ survey, selectedMealId }, history] = await Promise.all([this.getTodaySurvey(), this.getHistory(month, year)]);
 
     return {
-      hasOpenSurvey: !!survey,
-      hasVotedToday: !!selectedMealId,
-      monthVoteCount: history.length,
-      lastMealName: history[0]?.mealName ?? 'No meal yet'
+      survey,
+      selectedMealId,
+      summary: {
+        hasOpenSurvey: !!survey,
+        hasVotedToday: !!selectedMealId,
+        monthVoteCount: history.length,
+        lastMealName: history[0]?.mealName ?? 'No meal yet'
+      }
     };
   }
 }

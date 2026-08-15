@@ -33,6 +33,19 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
           </div>
           <p-tag [value]="roleLabels()" severity="info"></p-tag>
         </div>
+        @if (authService.organizations().length > 0) {
+          <div>
+            <small class="text-500">{{ 'employee.profile.organizationsLabel' | translate }}</small>
+            <div class="flex gap-1 flex-wrap mt-1">
+              @for (organization of authService.organizations(); track organization.id) {
+                <p-tag
+                  [value]="organization.name"
+                  [severity]="organization.id === authService.activeOrganization()?.id ? 'success' : 'secondary'"
+                ></p-tag>
+              }
+            </div>
+          </div>
+        }
       </div>
     </p-card>
   `
