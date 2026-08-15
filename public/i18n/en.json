@@ -78,10 +78,10 @@
     "menu": {
       "dashboard": "Dashboard",
       "meals": "Meals",
-      "surveys": "Surveys",
+      "surveys": "Menus",
       "users": "Users",
       "reports": "Reports",
-      "todaySurvey": "Today's Survey",
+      "todaySurvey": "Today's Menu",
       "history": "My History",
       "profile": "Profile",
       "organizations": "Organizations",
@@ -98,7 +98,7 @@
     },
     "login": {
       "heroTitle": "Daily meal voting without the spreadsheet churn.",
-      "heroBody": "Employees vote once per day. Admins manage menus, surveys, reports, and adoption.",
+      "heroBody": "Employees vote once per day. Admins manage meals, menus, reports, and adoption.",
       "mobileFirstTitle": "Mobile-first",
       "mobileFirstBody": "Quick voting flows optimized for phones and tablets.",
       "reportsTitle": "Actionable reports",
@@ -184,7 +184,7 @@
         "created": "Created",
         "actions": "Actions"
       },
-      "deleteConfirm": "Delete this meal? Existing survey relations should be cleaned up first.",
+      "deleteConfirm": "Delete this meal? Existing menu relations should be cleaned up first.",
       "dialog": {
         "header": "Meal",
         "nameLabel": "Name",
@@ -205,9 +205,9 @@
       }
     },
     "surveys": {
-      "title": "Surveys Management",
-      "subtitle": "Build date-based surveys, assign meals, and change status.",
-      "newSurvey": "New survey",
+      "title": "Menu Management",
+      "subtitle": "Build date-based menus, assign meals, and change status.",
+      "newSurvey": "New menu",
       "table": {
         "date": "Date",
         "status": "Status",
@@ -215,28 +215,28 @@
         "actions": "Actions"
       },
       "noMealsAssigned": "No meals assigned",
-      "deleteConfirm": "Delete this survey and all related meal mappings?",
+      "deleteConfirm": "Delete this menu and all related meal mappings?",
       "dialog": {
-        "header": "Survey",
-        "dateLabel": "Survey date",
+        "header": "Menu",
+        "dateLabel": "Menu date",
         "statusLabel": "Status",
         "mealsLabel": "Meals"
       },
       "toast": {
-        "updatedTitle": "Survey updated",
-        "updatedBody": "Survey marked as {{status}}.",
-        "savedTitle": "Survey saved",
-        "savedBody": "Survey scheduling has been updated.",
+        "updatedTitle": "Menu updated",
+        "updatedBody": "Menu marked as {{status}}.",
+        "savedTitle": "Menu saved",
+        "savedBody": "Menu scheduling has been updated.",
         "saveFailedTitle": "Save failed",
-        "saveFailedBody": "Unable to save this survey.",
-        "deletedTitle": "Survey deleted",
-        "deletedBody": "The survey has been removed.",
+        "saveFailedBody": "Unable to save this menu.",
+        "deletedTitle": "Menu deleted",
+        "deletedBody": "The menu has been removed.",
         "deleteFailedTitle": "Delete failed",
-        "deleteFailedBody": "Unable to delete this survey.",
+        "deleteFailedBody": "Unable to delete this menu.",
         "statusUpdateFailedTitle": "Status update failed",
-        "statusUpdateFailedBody": "Unable to update the survey status.",
-        "unavailableTitle": "Surveys unavailable",
-        "unavailableBody": "Unable to load survey configuration."
+        "statusUpdateFailedBody": "Unable to update the menu status.",
+        "unavailableTitle": "Menus unavailable",
+        "unavailableBody": "Unable to load menu configuration."
       }
     },
     "users": {
@@ -295,10 +295,10 @@
       "subtitle": "Your meal voting activity and today's action items.",
       "badge": "Live",
       "quickVoteTitle": "Vote now",
-      "quickVoteSubtitle": "Pick a meal for today’s survey and submit your vote without leaving the dashboard.",
-      "todaySurveyTitle": "Today's survey",
-      "hasOpenSurvey": "A survey is available for voting.",
-      "noOpenSurvey": "No open survey for today.",
+      "quickVoteSubtitle": "Pick a meal for today’s menu and submit your vote without leaving the dashboard.",
+      "todaySurveyTitle": "Today's menu",
+      "hasOpenSurvey": "A menu is available for voting.",
+      "noOpenSurvey": "No open menu for today.",
       "monthTitle": "This month",
       "monthBody": "{{count}} meals selected so far.",
       "lastMealTitle": "Last selected meal",
@@ -308,7 +308,7 @@
       "canVote": "You can still vote today.",
       "quickActionsTitle": "Quick actions",
       "quickActionsBody": "Jump into voting or inspect your monthly history.",
-      "openSurveyAction": "Open today's survey",
+      "openSurveyAction": "Open today's menu",
       "viewHistoryAction": "View my history",
       "toast": {
         "unavailableTitle": "Dashboard unavailable",
@@ -316,12 +316,12 @@
       }
     },
     "todaySurvey": {
-      "title": "Today's Survey",
-      "subtitle": "Open surveys appear here with meal choices and vote status.",
+      "title": "Today's Menu",
+      "subtitle": "Open menus appear here with meal choices and vote status.",
       "badge": "Single vote",
-      "loading": "Loading today's survey...",
-      "emptyTitle": "No survey today",
-      "emptyMessage": "There is no open survey for today yet.",
+      "loading": "Loading today's menu...",
+      "emptyTitle": "No menu today",
+      "emptyMessage": "There is no open menu for today yet.",
       "noDescription": "No description provided.",
       "selectedTag": "Selected",
       "chooseMeal": "Choose meal",
@@ -334,8 +334,8 @@
         "votedBody": "Your meal choice has been saved for today.",
         "voteFailedTitle": "Vote failed",
         "voteFailedBody": "Unable to submit your vote. If you already voted, the record remains unchanged.",
-        "unavailableTitle": "Survey unavailable",
-        "unavailableBody": "Unable to load today's survey."
+        "unavailableTitle": "Menu unavailable",
+        "unavailableBody": "Unable to load today's menu."
       }
     },
     "history": {
@@ -344,7 +344,7 @@
       "badge": "By month",
       "searchPlaceholder": "Search by meal name",
       "table": {
-        "surveyDate": "Survey Date",
+        "surveyDate": "Menu Date",
         "meal": "Meal",
         "votedAt": "Voted At",
         "status": "Status"
@@ -379,7 +379,7 @@
         "created": "Created",
         "actions": "Actions"
       },
-      "deleteConfirm": "Delete this organization? This fails if any users or surveys still reference it.",
+      "deleteConfirm": "Delete this organization? This fails if any users or menus still reference it.",
       "dialog": {
         "header": "Organization",
         "nameLabel": "Name",
@@ -396,7 +396,7 @@
         "deletedTitle": "Organization deleted",
         "deletedBody": "The organization has been removed.",
         "deleteFailedTitle": "Delete failed",
-        "deleteFailedBody": "Unable to delete this organization while it still has users or surveys.",
+        "deleteFailedBody": "Unable to delete this organization while it still has users or menus.",
         "unavailableTitle": "Organizations unavailable",
         "unavailableBody": "Unable to load organizations."
       }
@@ -433,9 +433,9 @@
       }
     },
     "surveys": {
-      "title": "Surveys Management",
-      "subtitle": "Build date-based surveys across organizations, assign meals, and change status.",
-      "newSurvey": "New survey",
+      "title": "Menu Management",
+      "subtitle": "Build date-based menus across organizations, assign meals, and change status.",
+      "newSurvey": "New menu",
       "organizationFilterPlaceholder": "All organizations",
       "table": {
         "organization": "Organization"
@@ -452,10 +452,10 @@
     "eyebrow": "Kitchen",
     "dashboard": {
       "title": "Daily Meal Counts",
-      "subtitle": "See how many employees selected each meal for a given survey day.",
-      "dateLabel": "Survey date",
-      "emptyTitle": "No survey for this date",
-      "emptyMessage": "There is no survey scheduled for the selected date in your active organization.",
+      "subtitle": "See how many employees selected each meal for a given menu day.",
+      "dateLabel": "Menu date",
+      "emptyTitle": "No menu for this date",
+      "emptyMessage": "There is no menu scheduled for the selected date in your active organization.",
       "table": {
         "meal": "Meal",
         "count": "Selections",
