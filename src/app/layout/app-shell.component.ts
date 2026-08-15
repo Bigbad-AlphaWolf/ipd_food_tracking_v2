@@ -15,6 +15,7 @@ import { LoadingService } from '../core/services/loading.service';
 import { LoadingSpinnerComponent } from '../shared/components/loading-spinner.component';
 import { LanguageSwitcherComponent } from '../shared/components/language-switcher.component';
 import { OrganizationSwitcherComponent } from '../shared/components/organization-switcher.component';
+import { ForcePasswordChangeComponent } from '../auth/force-password-change.component';
 
 @Component({
   selector: 'app-shell',
@@ -33,12 +34,16 @@ import { OrganizationSwitcherComponent } from '../shared/components/organization
     ConfirmDialogModule,
     LanguageSwitcherComponent,
     OrganizationSwitcherComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    ForcePasswordChangeComponent
   ],
   template: `
     <p-toast position="top-right"></p-toast>
     <p-confirmDialog></p-confirmDialog>
 
+    @if (authService.profile()?.must_change_password) {
+      <app-force-password-change></app-force-password-change>
+    } @else {
     <div class="shell-layout min-h-screen">
       <header class="app-topbar">
         <div class="app-topbar-inner">
@@ -183,6 +188,7 @@ import { OrganizationSwitcherComponent } from '../shared/components/organization
         <app-loading-spinner [overlay]="true"></app-loading-spinner>
       }
     </div>
+    }
   `,
   styles: [
     `

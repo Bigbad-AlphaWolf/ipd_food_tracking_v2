@@ -1,8 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { exportMonthlyReportCsv, exportMonthlyReportExcel } from '../../core/utils/monthly-report-export.util';
+import { resolveEdgeFunctionError } from '../../core/utils/edge-function-error.util';
 import {
   AppRole,
+  CreateUserPayload,
   DailySurvey,
   MonthlyReportRow,
   Organization,
@@ -70,6 +72,24 @@ export class PlatformService {
       ...profile,
       organizations: (organization_members ?? []).map((member) => member.organization).filter((org): org is Organization => !!org)
     }));
+  }
+
+  /**
+   * Provisions a brand-new user with a temporary password via the
+   * admin-create-user edge function (needs the service-role key, so it can't
+   * be done from the client directly). The new user must change their
+   * password on first login (see must_change_password).
+   */
+  async createUser(payload: CreateUserPayload): Promise<{ id: string }> {
+    const { data, error } = await this.supabase.functions.invoke<{ id: string }>('admin-create-user', {
+      body: payload
+    });
+
+    if (error) {
+      throw await resolveEdgeFunctionError(error);
+    }
+
+    return { id: data!.id };
   }
 
   async updateUser(id: string, payload: { roles: AppRole[]; organizationIds: string[]; isActive: boolean }): Promise<void> {

@@ -7,7 +7,8 @@
       "logout": "Se déconnecter",
       "cancel": "Annuler",
       "save": "Enregistrer",
-      "clear": "Effacer"
+      "clear": "Effacer",
+      "close": "Fermer"
     },
     "filters": {
       "month": "Mois",
@@ -132,6 +133,23 @@
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "submit": "Créer un compte employé",
       "backToLogin": "Retour à la connexion"
+    },
+    "forcePasswordChange": {
+      "title": "Définissez un nouveau mot de passe",
+      "subtitle": "Votre compte a été créé avec un mot de passe temporaire. Choisissez un nouveau mot de passe pour continuer.",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "confirmPasswordLabel": "Confirmer le nouveau mot de passe",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "submit": "Définir le mot de passe",
+      "toast": {
+        "successTitle": "Mot de passe mis à jour",
+        "successBody": "Votre mot de passe a été modifié.",
+        "failureTitle": "Impossible de mettre à jour le mot de passe",
+        "failureBody": "Impossible de définir votre nouveau mot de passe. Veuillez réessayer.",
+        "samePasswordTitle": "Mot de passe identique",
+        "samePasswordBody": "Choisissez un mot de passe différent de votre mot de passe temporaire."
+      },
+      "samePassword": "Votre nouveau mot de passe doit être différent du mot de passe temporaire."
     }
   },
   "admin": {
@@ -443,6 +461,41 @@
       "toast": {
         "unavailableTitle": "Comptage des repas indisponible",
         "unavailableBody": "Impossible de charger le comptage des repas pour cette date."
+      }
+    }
+  },
+  "shared": {
+    "createUser": {
+      "newUser": "Nouvel utilisateur",
+      "header": "Créer un utilisateur",
+      "fullNameLabel": "Nom complet",
+      "emailLabel": "E-mail",
+      "departmentLabel": "Département",
+      "phoneLabel": "Numéro de téléphone",
+      "rolesLabel": "Rôles",
+      "organizationLabel": "Organisations",
+      "organizationRequired": "Sélectionnez au moins une organisation.",
+      "generatePasswordLabel": "Générer automatiquement un mot de passe temporaire",
+      "temporaryPasswordLabel": "Mot de passe temporaire",
+      "confirmPasswordLabel": "Confirmer le mot de passe",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "regenerate": "Regénérer",
+      "submit": "Créer l'utilisateur",
+      "toast": {
+        "createdTitle": "Utilisateur créé",
+        "createdBody": "Partagez le mot de passe temporaire avec l'utilisateur — il devra en définir un nouveau dès sa première connexion.",
+        "createFailedTitle": "Impossible de créer l'utilisateur",
+        "createFailedBody": "Impossible de créer cet utilisateur. Vérifiez l'e-mail et réessayez."
+      }
+    },
+    "userCredentials": {
+      "header": "Utilisateur créé",
+      "body": "Partagez ces identifiants avec le nouvel utilisateur. Il devra définir un nouveau mot de passe lors de sa première connexion.",
+      "emailLabel": "E-mail",
+      "passwordLabel": "Mot de passe temporaire",
+      "toast": {
+        "copiedTitle": "Copié",
+        "copiedBody": "Copié dans le presse-papiers."
       }
     }
   }

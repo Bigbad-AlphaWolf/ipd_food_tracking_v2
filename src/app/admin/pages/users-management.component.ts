@@ -11,9 +11,12 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TagModule } from 'primeng/tag';
 import { SearchToolbarComponent } from '../../shared/components/search-toolbar.component';
+import { CreateUserDialogComponent } from '../../shared/components/create-user-dialog.component';
+import { UserCredentialsDialogComponent } from '../../shared/components/user-credentials-dialog.component';
 import { AdminService } from '../services/admin.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
-import { Profile, SelectOption } from '../../core/models/app.models';
+import { CreateUserPayload, Profile, SelectOption } from '../../core/models/app.models';
 
 @Component({
   selector: 'app-users-management',
@@ -30,7 +33,9 @@ import { Profile, SelectOption } from '../../core/models/app.models';
     MultiSelectModule,
     ToggleSwitchModule,
     TagModule,
-    SearchToolbarComponent
+    SearchToolbarComponent,
+    CreateUserDialogComponent,
+    UserCredentialsDialogComponent
   ],
   template: `
     <app-page-header
@@ -38,6 +43,10 @@ import { Profile, SelectOption } from '../../core/models/app.models';
       [title]="'admin.users.title' | translate"
       [subtitle]="'admin.users.subtitle' | translate"
     ></app-page-header>
+
+    <div class="flex justify-content-end mb-3">
+      <button pButton type="button" [label]="'shared.createUser.newUser' | translate" icon="pi pi-user-plus" (click)="createDialogVisible.set(true)"></button>
+    </div>
 
     <app-search-toolbar
       [search]="search()"
@@ -117,11 +126,28 @@ import { Profile, SelectOption } from '../../core/models/app.models';
         <button pButton type="button" [label]="'common.actions.save' | translate" [disabled]="form.invalid || saving()" (click)="save()"></button>
       </ng-template>
     </p-dialog>
+
+    <app-create-user-dialog
+      [visible]="createDialogVisible()"
+      (visibleChange)="createDialogVisible.set($event)"
+      [roleOptions]="roleOptions()"
+      [organizationOptions]="organizationOptions()"
+      [saving]="creating()"
+      (created)="createUser($event)"
+    ></app-create-user-dialog>
+
+    <app-user-credentials-dialog
+      [visible]="credentialsDialogVisible()"
+      (visibleChange)="credentialsDialogVisible.set($event)"
+      [email]="createdCredentials()?.email ?? ''"
+      [password]="createdCredentials()?.password ?? ''"
+    ></app-user-credentials-dialog>
   `
 })
 export class UsersManagementComponent {
   private readonly fb = inject(FormBuilder);
   private readonly adminService = inject(AdminService);
+  private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
   private readonly translateService = inject(TranslateService);
 
@@ -131,6 +157,16 @@ export class UsersManagementComponent {
   readonly dialogVisible = signal(false);
   readonly users = signal<Profile[]>([]);
   readonly selectedUser = signal<Profile | null>(null);
+
+  readonly creating = signal(false);
+  readonly createDialogVisible = signal(false);
+  readonly credentialsDialogVisible = signal(false);
+  readonly createdCredentials = signal<{ email: string; password: string } | null>(null);
+
+  /** An org admin may only assign organizations they themselves belong to — the edge function enforces this too. */
+  readonly organizationOptions = computed<SelectOption<string>[]>(() =>
+    this.authService.organizations().map((organization) => ({ label: organization.name, value: organization.id }))
+  );
 
   readonly roleOptions = computed<SelectOption<NonNullable<Profile['role']>>[]>(() => {
     this.translateService.currentLang();
@@ -192,6 +228,30 @@ export class UsersManagementComponent {
       );
     } finally {
       this.saving.set(false);
+    }
+  }
+
+  async createUser(payload: CreateUserPayload): Promise<void> {
+    this.creating.set(true);
+
+    try {
+      await this.adminService.createUser(payload);
+      this.createDialogVisible.set(false);
+      this.createdCredentials.set({ email: payload.email, password: payload.password });
+      this.credentialsDialogVisible.set(true);
+      this.toastService.success(
+        this.translateService.instant('shared.createUser.toast.createdTitle'),
+        this.translateService.instant('shared.createUser.toast.createdBody')
+      );
+      await this.load();
+    } catch (error) {
+      console.error(error);
+      this.toastService.error(
+        this.translateService.instant('shared.createUser.toast.createFailedTitle'),
+        this.translateService.instant('shared.createUser.toast.createFailedBody')
+      );
+    } finally {
+      this.creating.set(false);
     }
   }
 

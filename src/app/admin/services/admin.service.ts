@@ -2,8 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { AuthService } from '../../core/services/auth.service';
 import { exportMonthlyReportCsv, exportMonthlyReportExcel } from '../../core/utils/monthly-report-export.util';
+import { resolveEdgeFunctionError } from '../../core/utils/edge-function-error.util';
 import {
   AdminDashboardMetrics,
+  CreateUserPayload,
   DailySurvey,
   Meal,
   MonthlyReportRow,
@@ -121,6 +123,26 @@ export class AdminService {
     if (error) {
       throw error;
     }
+  }
+
+  /**
+   * Provisions a brand-new user with a temporary password via the
+   * admin-create-user edge function (needs the service-role key, so it can't
+   * be done from the client directly). The new user must change their
+   * password on first login (see must_change_password). The edge function
+   * enforces that an org admin may only grant employee/admin/meal_coordinator
+   * and only within organizations they themselves belong to.
+   */
+  async createUser(payload: CreateUserPayload): Promise<{ id: string }> {
+    const { data, error } = await this.supabase.functions.invoke<{ id: string }>('admin-create-user', {
+      body: payload
+    });
+
+    if (error) {
+      throw await resolveEdgeFunctionError(error);
+    }
+
+    return { id: data!.id };
   }
 
   async getUsers(search = ''): Promise<Profile[]> {

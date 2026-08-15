@@ -30,6 +30,8 @@ export interface Profile {
   /** All organizations this user belongs to (admin/employee can belong to several). */
   organizations?: Organization[];
   is_active: boolean;
+  /** True right after an admin-provisioned account's first login, until the user sets their own password. */
+  must_change_password: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -150,4 +152,16 @@ export interface MealVoteCount {
   meal_id: string;
   meal_name: string;
   vote_count: number;
+}
+
+/** Provisions a brand-new user (via the admin-create-user edge function) with a temporary password. */
+export interface CreateUserPayload {
+  email: string;
+  fullName: string;
+  password: string;
+  roles: AppRole[];
+  /** Ignored server-side when roles includes platform_administrator. */
+  organizationIds: string[];
+  department?: string;
+  phoneNumber?: string;
 }

@@ -7,7 +7,8 @@
       "logout": "Logout",
       "cancel": "Cancel",
       "save": "Save",
-      "clear": "Clear"
+      "clear": "Clear",
+      "close": "Close"
     },
     "filters": {
       "month": "Month",
@@ -132,6 +133,23 @@
       "passwordMismatch": "Passwords do not match.",
       "submit": "Create employee account",
       "backToLogin": "Back to login"
+    },
+    "forcePasswordChange": {
+      "title": "Set a new password",
+      "subtitle": "Your account was created with a temporary password. Choose a new password to continue.",
+      "newPasswordLabel": "New password",
+      "confirmPasswordLabel": "Confirm new password",
+      "passwordMismatch": "Passwords do not match.",
+      "submit": "Set password",
+      "toast": {
+        "successTitle": "Password updated",
+        "successBody": "Your password has been changed.",
+        "failureTitle": "Could not update password",
+        "failureBody": "Unable to set your new password. Please try again.",
+        "samePasswordTitle": "Same password",
+        "samePasswordBody": "Choose a password different from your temporary one."
+      },
+      "samePassword": "Your new password must be different from the temporary one."
     }
   },
   "admin": {
@@ -443,6 +461,41 @@
       "toast": {
         "unavailableTitle": "Meal counts unavailable",
         "unavailableBody": "Unable to load meal counts for this date."
+      }
+    }
+  },
+  "shared": {
+    "createUser": {
+      "newUser": "New user",
+      "header": "Create user",
+      "fullNameLabel": "Full name",
+      "emailLabel": "Email",
+      "departmentLabel": "Department",
+      "phoneLabel": "Phone number",
+      "rolesLabel": "Roles",
+      "organizationLabel": "Organizations",
+      "organizationRequired": "Select at least one organization.",
+      "generatePasswordLabel": "Generate a temporary password automatically",
+      "temporaryPasswordLabel": "Temporary password",
+      "confirmPasswordLabel": "Confirm password",
+      "passwordMismatch": "Passwords do not match.",
+      "regenerate": "Regenerate",
+      "submit": "Create user",
+      "toast": {
+        "createdTitle": "User created",
+        "createdBody": "Share the temporary password with the user — they must set a new one at first login.",
+        "createFailedTitle": "Could not create user",
+        "createFailedBody": "Unable to create this user. Check the email and try again."
+      }
+    },
+    "userCredentials": {
+      "header": "User created",
+      "body": "Share these credentials with the new user. They will be asked to set a new password the first time they log in.",
+      "emailLabel": "Email",
+      "passwordLabel": "Temporary password",
+      "toast": {
+        "copiedTitle": "Copied",
+        "copiedBody": "Copied to clipboard."
       }
     }
   }

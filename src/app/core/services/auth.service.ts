@@ -215,6 +215,41 @@ export class AuthService {
     });
   }
 
+  /**
+   * Sets a new password for the signed-in user and clears must_change_password.
+   * Used the first time an admin-provisioned account (created with a
+   * temporary password) logs in.
+   */
+  async completeForcedPasswordChange(newPassword: string): Promise<void> {
+    const profile = this.profileState();
+
+    if (!profile) {
+      throw new Error('You must be signed in to change your password.');
+    }
+
+    this.loadingService.start();
+    try {
+      const { error: passwordError } = await this.supabase.auth.updateUser({ password: newPassword });
+
+      if (passwordError) {
+        throw passwordError;
+      }
+
+      const { error: profileError } = await this.supabase
+        .from('profiles')
+        .update({ must_change_password: false, updated_at: new Date().toISOString() })
+        .eq('id', profile.id);
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      this.profileState.set({ ...profile, must_change_password: false });
+    } finally {
+      this.loadingService.stop();
+    }
+  }
+
   /** Switches the active organization and reloads so every page refetches under the new scope. */
   async switchOrganization(organizationId: string): Promise<void> {
     this.loadingService.start();

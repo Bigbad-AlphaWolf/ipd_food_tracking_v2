@@ -12,7 +12,9 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TagModule } from 'primeng/tag';
 import { PlatformService } from '../services/platform.service';
 import { ToastService } from '../../core/services/toast.service';
-import { AppRole, Organization, Profile, SelectOption } from '../../core/models/app.models';
+import { CreateUserDialogComponent } from '../../shared/components/create-user-dialog.component';
+import { UserCredentialsDialogComponent } from '../../shared/components/user-credentials-dialog.component';
+import { AppRole, CreateUserPayload, Organization, Profile, SelectOption } from '../../core/models/app.models';
 
 @Component({
   selector: 'app-platform-users-management',
@@ -29,7 +31,9 @@ import { AppRole, Organization, Profile, SelectOption } from '../../core/models/
     SelectModule,
     MultiSelectModule,
     ToggleSwitchModule,
-    TagModule
+    TagModule,
+    CreateUserDialogComponent,
+    UserCredentialsDialogComponent
   ],
   template: `
     <app-page-header
@@ -37,6 +41,10 @@ import { AppRole, Organization, Profile, SelectOption } from '../../core/models/
       [title]="'platform.users.title' | translate"
       [subtitle]="'platform.users.subtitle' | translate"
     ></app-page-header>
+
+    <div class="flex justify-content-end mb-3">
+      <button pButton type="button" [label]="'shared.createUser.newUser' | translate" icon="pi pi-user-plus" (click)="createDialogVisible.set(true)"></button>
+    </div>
 
     <div class="app-surface p-3 mb-4">
       <div class="grid align-items-end">
@@ -170,6 +178,22 @@ import { AppRole, Organization, Profile, SelectOption } from '../../core/models/
         <button pButton type="button" [label]="'common.actions.save' | translate" [disabled]="form.invalid || saving()" (click)="save()"></button>
       </ng-template>
     </p-dialog>
+
+    <app-create-user-dialog
+      [visible]="createDialogVisible()"
+      (visibleChange)="createDialogVisible.set($event)"
+      [roleOptions]="roleOptions()"
+      [organizationOptions]="organizationOptions()"
+      [saving]="creating()"
+      (created)="createUser($event)"
+    ></app-create-user-dialog>
+
+    <app-user-credentials-dialog
+      [visible]="credentialsDialogVisible()"
+      (visibleChange)="credentialsDialogVisible.set($event)"
+      [email]="createdCredentials()?.email ?? ''"
+      [password]="createdCredentials()?.password ?? ''"
+    ></app-user-credentials-dialog>
   `
 })
 export class PlatformUsersManagementComponent {
@@ -186,6 +210,11 @@ export class PlatformUsersManagementComponent {
   readonly users = signal<Profile[]>([]);
   readonly organizations = signal<Organization[]>([]);
   readonly selectedUser = signal<Profile | null>(null);
+
+  readonly creating = signal(false);
+  readonly createDialogVisible = signal(false);
+  readonly credentialsDialogVisible = signal(false);
+  readonly createdCredentials = signal<{ email: string; password: string } | null>(null);
 
   readonly form = this.fb.nonNullable.group(
     {
@@ -310,6 +339,30 @@ export class PlatformUsersManagementComponent {
       );
     } finally {
       this.saving.set(false);
+    }
+  }
+
+  async createUser(payload: CreateUserPayload): Promise<void> {
+    this.creating.set(true);
+
+    try {
+      await this.platformService.createUser(payload);
+      this.createDialogVisible.set(false);
+      this.createdCredentials.set({ email: payload.email, password: payload.password });
+      this.credentialsDialogVisible.set(true);
+      this.toastService.success(
+        this.translateService.instant('shared.createUser.toast.createdTitle'),
+        this.translateService.instant('shared.createUser.toast.createdBody')
+      );
+      await this.loadUsers();
+    } catch (error) {
+      console.error(error);
+      this.toastService.error(
+        this.translateService.instant('shared.createUser.toast.createFailedTitle'),
+        this.translateService.instant('shared.createUser.toast.createFailedBody')
+      );
+    } finally {
+      this.creating.set(false);
     }
   }
 
