@@ -48,6 +48,9 @@ export interface DailySurvey {
   status: SurveyStatus;
   created_by: string;
   created_at: string;
+  /** Present when the row is loaded org-scoped (e.g. by a platform administrator across organizations). */
+  organization_id?: string;
+  organization?: Organization;
   survey_meals?: SurveyMeal[];
 }
 
@@ -133,4 +136,9 @@ export interface SurveyUpsertPayload {
   survey_date: string;
   status: SurveyStatus;
   mealIds: string[];
+}
+
+/** A platform administrator has no active organization of their own, so they must pick one explicitly. */
+export interface PlatformSurveyUpsertPayload extends SurveyUpsertPayload {
+  organizationId: string;
 }

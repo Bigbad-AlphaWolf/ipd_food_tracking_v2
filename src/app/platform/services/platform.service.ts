@@ -1,6 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from '../../core/services/supabase.service';
-import { AppRole, Organization, Profile } from '../../core/models/app.models';
+import { exportMonthlyReportCsv, exportMonthlyReportExcel } from '../../core/utils/monthly-report-export.util';
+import {
+  AppRole,
+  DailySurvey,
+  MonthlyReportRow,
+  Organization,
+  PlatformSurveyUpsertPayload,
+  Profile
+} from '../../core/models/app.models';
 
 interface ProfileRow extends Profile {
   organization_members?: { organization: Organization | null }[] | null;
@@ -118,5 +126,108 @@ export class PlatformService {
     if (error) {
       throw error;
     }
+  }
+
+  async getSurveys(organizationId: string | null = null): Promise<DailySurvey[]> {
+    let query = this.supabase
+      .from('daily_surveys')
+      .select('*, organization:organizations(id, name, code), survey_meals(*, meal:meals(*))')
+      .order('survey_date', { ascending: false });
+
+    if (organizationId) {
+      query = query.eq('organization_id', organizationId);
+    }
+
+    const { data, error } = await query.returns<DailySurvey[]>();
+
+    if (error) {
+      throw error;
+    }
+
+    return data ?? [];
+  }
+
+  async saveSurvey(payload: PlatformSurveyUpsertPayload): Promise<void> {
+    const {
+      data: { user },
+      error: userError
+    } = await this.supabase.auth.getUser();
+
+    if (userError) {
+      throw userError;
+    }
+
+    if (!user) {
+      throw new Error('You must be authenticated to create or update surveys.');
+    }
+
+    const surveyData = {
+      id: payload.id,
+      survey_date: payload.survey_date,
+      status: payload.status,
+      created_by: user.id,
+      organization_id: payload.organizationId
+    };
+
+    const { data, error } = await this.supabase.from('daily_surveys').upsert(surveyData).select('id').single<{ id: string }>();
+
+    if (error) {
+      throw error;
+    }
+
+    const surveyId = data.id;
+
+    const { error: deleteError } = await this.supabase.from('survey_meals').delete().eq('survey_id', surveyId);
+
+    if (deleteError) {
+      throw deleteError;
+    }
+
+    if (payload.mealIds.length > 0) {
+      const { error: insertError } = await this.supabase.from('survey_meals').insert(
+        payload.mealIds.map((mealId) => ({ survey_id: surveyId, meal_id: mealId }))
+      );
+
+      if (insertError) {
+        throw insertError;
+      }
+    }
+  }
+
+  async deleteSurvey(id: string): Promise<void> {
+    const { error: mappingError } = await this.supabase.from('survey_meals').delete().eq('survey_id', id);
+
+    if (mappingError) {
+      throw mappingError;
+    }
+
+    const { error } = await this.supabase.from('daily_surveys').delete().eq('id', id);
+
+    if (error) {
+      throw error;
+    }
+  }
+
+  async getMonthlyReport(month: number, year: number, search = '', organizationId: string | null = null): Promise<MonthlyReportRow[]> {
+    const { data, error } = await this.supabase.rpc('get_monthly_report', {
+      report_month: month,
+      report_year: year,
+      employee_search: search || null,
+      organization_id_filter: organizationId
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return data ?? [];
+  }
+
+  exportCsv(rows: MonthlyReportRow[], filename: string): void {
+    exportMonthlyReportCsv(rows, filename);
+  }
+
+  exportExcel(rows: MonthlyReportRow[], filename: string): void {
+    exportMonthlyReportExcel(rows, filename);
   }
 }

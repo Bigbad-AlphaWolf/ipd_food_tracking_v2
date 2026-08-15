@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import * as XLSX from 'xlsx';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { AuthService } from '../../core/services/auth.service';
+import { exportMonthlyReportCsv, exportMonthlyReportExcel } from '../../core/utils/monthly-report-export.util';
 import {
   AdminDashboardMetrics,
   DailySurvey,
@@ -194,29 +194,10 @@ export class AdminService {
   }
 
   exportCsv(rows: MonthlyReportRow[], filename: string): void {
-    const headers = ['Employee', 'Email', 'Department', 'Month', 'Total Votes', 'Favorite Meal'];
-    const values = rows.map((row) => [row.employeeName, row.email, row.department, row.month, row.totalVotes, row.favoriteMeal]);
-    const csv = [headers, ...values]
-      .map((line) => line.map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`).join(','))
-      .join('\n');
-
-    this.downloadBlob(new Blob([csv], { type: 'text/csv;charset=utf-8' }), `${filename}.csv`);
+    exportMonthlyReportCsv(rows, filename);
   }
 
   exportExcel(rows: MonthlyReportRow[], filename: string): void {
-    const worksheet = XLSX.utils.json_to_sheet(rows);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
-    const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    this.downloadBlob(new Blob([buffer], { type: 'application/octet-stream' }), `${filename}.xlsx`);
-  }
-
-  private downloadBlob(blob: Blob, filename: string): void {
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    link.click();
-    window.URL.revokeObjectURL(url);
+    exportMonthlyReportExcel(rows, filename);
   }
 }

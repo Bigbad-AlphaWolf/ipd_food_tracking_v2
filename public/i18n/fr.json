@@ -408,6 +408,21 @@
         "unavailableTitle": "Utilisateurs indisponibles",
         "unavailableBody": "Impossible de charger les utilisateurs."
       }
+    },
+    "surveys": {
+      "title": "Gestion des sondages",
+      "subtitle": "Créez des sondages datés pour toutes les organisations, associez des repas et changez leur statut.",
+      "newSurvey": "Nouveau sondage",
+      "organizationFilterPlaceholder": "Toutes les organisations",
+      "table": {
+        "organization": "Organisation"
+      },
+      "dialog": {
+        "organizationLabel": "Organisation"
+      }
+    },
+    "reports": {
+      "organizationFilterPlaceholder": "Toutes les organisations"
     }
   }
 }

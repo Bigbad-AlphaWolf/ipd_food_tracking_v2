@@ -376,6 +376,9 @@ export class AppShellComponent {
       return [
         { label: this.translateService.instant('shell.menu.organizations'), icon: 'pi pi-building', routerLink: '/platform/organizations' },
         { label: this.translateService.instant('shell.menu.allUsers'), icon: 'pi pi-users', routerLink: '/platform/users' },
+        { label: this.translateService.instant('shell.menu.meals'), icon: 'pi pi-apple', routerLink: '/platform/meals' },
+        { label: this.translateService.instant('shell.menu.surveys'), icon: 'pi pi-calendar', routerLink: '/platform/surveys' },
+        { label: this.translateService.instant('shell.menu.reports'), icon: 'pi pi-file-export', routerLink: '/platform/reports' },
         { label: this.translateService.instant('shell.menu.profile'), icon: 'pi pi-user', routerLink: '/platform/profile' }
       ];
     }

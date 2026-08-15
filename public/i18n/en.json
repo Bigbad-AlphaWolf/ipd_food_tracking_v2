@@ -408,6 +408,21 @@
         "unavailableTitle": "Users unavailable",
         "unavailableBody": "Unable to load users."
       }
+    },
+    "surveys": {
+      "title": "Surveys Management",
+      "subtitle": "Build date-based surveys across organizations, assign meals, and change status.",
+      "newSurvey": "New survey",
+      "organizationFilterPlaceholder": "All organizations",
+      "table": {
+        "organization": "Organization"
+      },
+      "dialog": {
+        "organizationLabel": "Organization"
+      }
+    },
+    "reports": {
+      "organizationFilterPlaceholder": "All organizations"
     }
   }
 }
