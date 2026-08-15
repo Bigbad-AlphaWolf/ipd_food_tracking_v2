@@ -65,7 +65,8 @@
   "roles": {
     "admin": "Organization Administrator",
     "employee": "Employee",
-    "platform_administrator": "Platform Administrator"
+    "platform_administrator": "Platform Administrator",
+    "meal_coordinator": "Meal Coordinator"
   },
   "shell": {
     "subtitle": "Meal operations",
@@ -82,7 +83,8 @@
       "history": "My History",
       "profile": "Profile",
       "organizations": "Organizations",
-      "allUsers": "All Users"
+      "allUsers": "All Users",
+      "mealCounts": "Meal Counts"
     }
   },
   "auth": {
@@ -423,6 +425,25 @@
     },
     "reports": {
       "organizationFilterPlaceholder": "All organizations"
+    }
+  },
+  "kitchen": {
+    "eyebrow": "Kitchen",
+    "dashboard": {
+      "title": "Daily Meal Counts",
+      "subtitle": "See how many employees selected each meal for a given survey day.",
+      "dateLabel": "Survey date",
+      "emptyTitle": "No survey for this date",
+      "emptyMessage": "There is no survey scheduled for the selected date in your active organization.",
+      "table": {
+        "meal": "Meal",
+        "count": "Selections",
+        "total": "Total"
+      },
+      "toast": {
+        "unavailableTitle": "Meal counts unavailable",
+        "unavailableBody": "Unable to load meal counts for this date."
+      }
     }
   }
 }

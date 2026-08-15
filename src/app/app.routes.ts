@@ -37,6 +37,11 @@ export const routes: Routes = [
 				path: 'platform',
 				canActivate: [roleGuard('platform_administrator')],
 				loadChildren: () => import('./platform/platform.routes').then((m) => m.PLATFORM_ROUTES)
+			},
+			{
+				path: 'kitchen',
+				canActivate: [roleGuard('meal_coordinator')],
+				loadChildren: () => import('./kitchen/kitchen.routes').then((m) => m.KITCHEN_ROUTES)
 			}
 		]
 	},

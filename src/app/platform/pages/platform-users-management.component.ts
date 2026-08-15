@@ -203,6 +203,7 @@ export class PlatformUsersManagementComponent {
     return [
       { label: this.translateService.instant('roles.employee'), value: 'employee' },
       { label: this.translateService.instant('roles.admin'), value: 'admin' },
+      { label: this.translateService.instant('roles.meal_coordinator'), value: 'meal_coordinator' },
       { label: this.translateService.instant('roles.platform_administrator'), value: 'platform_administrator' }
     ];
   });
@@ -262,7 +263,8 @@ export class PlatformUsersManagementComponent {
     const fromArray = Array.isArray(user.roles) ? user.roles : [];
     const fromLegacy = user.role ? [user.role] : [];
     const merged = [...new Set([...fromArray, ...fromLegacy])].filter(
-      (role): role is AppRole => role === 'admin' || role === 'employee' || role === 'platform_administrator'
+      (role): role is AppRole =>
+        role === 'admin' || role === 'employee' || role === 'platform_administrator' || role === 'meal_coordinator'
     );
 
     return merged.length > 0 ? merged : ['employee'];

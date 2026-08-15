@@ -1,4 +1,4 @@
-export type AppRole = 'admin' | 'employee' | 'platform_administrator';
+export type AppRole = 'admin' | 'employee' | 'platform_administrator' | 'meal_coordinator';
 
 export type SurveyStatus = 'draft' | 'open' | 'closed';
 
@@ -141,4 +141,13 @@ export interface SurveyUpsertPayload {
 /** A platform administrator has no active organization of their own, so they must pick one explicitly. */
 export interface PlatformSurveyUpsertPayload extends SurveyUpsertPayload {
   organizationId: string;
+}
+
+/** Per-meal vote count for one survey day — aggregate only, no individual employee/vote data. */
+export interface MealVoteCount {
+  survey_id: string;
+  survey_status: SurveyStatus;
+  meal_id: string;
+  meal_name: string;
+  vote_count: number;
 }

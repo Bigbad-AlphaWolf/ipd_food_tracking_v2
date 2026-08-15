@@ -65,7 +65,8 @@
   "roles": {
     "admin": "Administrateur d'organisation",
     "employee": "Employé",
-    "platform_administrator": "Administrateur de la plateforme"
+    "platform_administrator": "Administrateur de la plateforme",
+    "meal_coordinator": "Coordinateur des repas"
   },
   "shell": {
     "subtitle": "Gestion des repas",
@@ -82,7 +83,8 @@
       "history": "Mon historique",
       "profile": "Profil",
       "organizations": "Organisations",
-      "allUsers": "Tous les utilisateurs"
+      "allUsers": "Tous les utilisateurs",
+      "mealCounts": "Comptage des repas"
     }
   },
   "auth": {
@@ -423,6 +425,25 @@
     },
     "reports": {
       "organizationFilterPlaceholder": "Toutes les organisations"
+    }
+  },
+  "kitchen": {
+    "eyebrow": "Cuisine",
+    "dashboard": {
+      "title": "Comptage quotidien des repas",
+      "subtitle": "Consultez le nombre d'employés ayant sélectionné chaque repas pour un jour de sondage donné.",
+      "dateLabel": "Date du sondage",
+      "emptyTitle": "Aucun sondage pour cette date",
+      "emptyMessage": "Aucun sondage n'est prévu à la date sélectionnée dans votre organisation active.",
+      "table": {
+        "meal": "Repas",
+        "count": "Sélections",
+        "total": "Total"
+      },
+      "toast": {
+        "unavailableTitle": "Comptage des repas indisponible",
+        "unavailableBody": "Impossible de charger le comptage des repas pour cette date."
+      }
     }
   }
 }

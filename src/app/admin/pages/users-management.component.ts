@@ -136,7 +136,8 @@ export class UsersManagementComponent {
     this.translateService.currentLang();
     return [
       { label: this.translateService.instant('roles.employee'), value: 'employee' },
-      { label: this.translateService.instant('roles.admin'), value: 'admin' }
+      { label: this.translateService.instant('roles.admin'), value: 'admin' },
+      { label: this.translateService.instant('roles.meal_coordinator'), value: 'meal_coordinator' }
     ];
   });
 
@@ -214,7 +215,7 @@ export class UsersManagementComponent {
     const fromArray = Array.isArray(user.roles) ? user.roles : [];
     const fromLegacy = user.role ? [user.role] : [];
     const merged = [...new Set([...fromArray, ...fromLegacy])].filter(
-      (role): role is NonNullable<Profile['role']> => role === 'admin' || role === 'employee'
+      (role): role is NonNullable<Profile['role']> => role === 'admin' || role === 'employee' || role === 'meal_coordinator'
     );
 
     return merged.length > 0 ? merged : ['employee'];

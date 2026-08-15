@@ -48,7 +48,7 @@ export class AuthService {
   /** The organization currently selected — every query/RLS check scopes to this one. */
   readonly activeOrganization = computed<Organization | null>(() => this.profileState()?.active_organization ?? null);
 
-  /** Landing route for the current user, by role precedence: platform admin > org admin > employee. */
+  /** Landing route for the current user, by role precedence: platform admin > org admin > meal coordinator > employee. */
   readonly homeRoute = computed<string>(() => {
     if (this.hasRole('platform_administrator')) {
       return '/platform';
@@ -56,6 +56,10 @@ export class AuthService {
 
     if (this.hasRole('admin')) {
       return '/admin/dashboard';
+    }
+
+    if (this.hasRole('meal_coordinator')) {
+      return '/kitchen/dashboard';
     }
 
     return '/employee/dashboard';
@@ -243,7 +247,8 @@ export class AuthService {
     const fromArray = Array.isArray(profile.roles) ? profile.roles : [];
     const fromLegacyRole = profile.role ? [profile.role] : [];
     const merged = [...new Set([...fromArray, ...fromLegacyRole])].filter(
-      (role): role is AppRole => role === 'admin' || role === 'employee' || role === 'platform_administrator'
+      (role): role is AppRole =>
+        role === 'admin' || role === 'employee' || role === 'platform_administrator' || role === 'meal_coordinator'
     );
 
     return merged.length > 0 ? merged : ['employee'];

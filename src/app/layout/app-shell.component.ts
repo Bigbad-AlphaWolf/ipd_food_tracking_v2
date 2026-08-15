@@ -364,10 +364,18 @@ export class AppShellComponent {
     return roles.map((role) => this.translateService.instant(`roles.${role}`)).join(', ');
   });
 
-  /** The shared ProfileComponent is mounted under both /employee and /platform, guarded per-role. */
-  readonly profileRoute = computed(() =>
-    this.authService.hasRole('platform_administrator') ? '/platform/profile' : '/employee/profile'
-  );
+  /** The shared ProfileComponent is mounted under /employee, /platform, and /kitchen, guarded per-role. */
+  readonly profileRoute = computed(() => {
+    if (this.authService.hasRole('platform_administrator')) {
+      return '/platform/profile';
+    }
+
+    if (!this.authService.hasAnyRole(['admin', 'employee']) && this.authService.hasRole('meal_coordinator')) {
+      return '/kitchen/profile';
+    }
+
+    return '/employee/profile';
+  });
 
   readonly menuItems = computed<MenuItem[]>(() => {
     this.translateService.currentLang();
@@ -384,8 +392,12 @@ export class AppShellComponent {
     }
 
     const common: MenuItem[] = [
-      { label: this.translateService.instant('shell.menu.profile'), icon: 'pi pi-user', routerLink: '/employee/profile' }
+      { label: this.translateService.instant('shell.menu.profile'), icon: 'pi pi-user', routerLink: this.profileRoute() }
     ];
+
+    const kitchenItems: MenuItem[] = this.authService.hasRole('meal_coordinator')
+      ? [{ label: this.translateService.instant('shell.menu.mealCounts'), icon: 'pi pi-clipboard', routerLink: '/kitchen/dashboard' }]
+      : [];
 
     if (this.authService.hasRole('admin')) {
       return [
@@ -394,16 +406,23 @@ export class AppShellComponent {
         { label: this.translateService.instant('shell.menu.surveys'), icon: 'pi pi-calendar', routerLink: '/admin/surveys' },
         { label: this.translateService.instant('shell.menu.users'), icon: 'pi pi-users', routerLink: '/admin/users' },
         { label: this.translateService.instant('shell.menu.reports'), icon: 'pi pi-file-export', routerLink: '/admin/reports' },
+        ...kitchenItems,
         ...common
       ];
     }
 
-    return [
-      { label: this.translateService.instant('shell.menu.dashboard'), icon: 'pi pi-home', routerLink: '/employee/dashboard' },
-      { label: this.translateService.instant('shell.menu.todaySurvey'), icon: 'pi pi-megaphone', routerLink: '/employee/today-survey' },
-      { label: this.translateService.instant('shell.menu.history'), icon: 'pi pi-history', routerLink: '/employee/history' },
-      ...common
-    ];
+    if (this.authService.hasRole('employee')) {
+      return [
+        { label: this.translateService.instant('shell.menu.dashboard'), icon: 'pi pi-home', routerLink: '/employee/dashboard' },
+        { label: this.translateService.instant('shell.menu.todaySurvey'), icon: 'pi pi-megaphone', routerLink: '/employee/today-survey' },
+        { label: this.translateService.instant('shell.menu.history'), icon: 'pi pi-history', routerLink: '/employee/history' },
+        ...kitchenItems,
+        ...common
+      ];
+    }
+
+    // meal_coordinator with no other role — kitchen dashboard is their whole app.
+    return [...kitchenItems, ...common];
   });
 
   async logout(): Promise<void> {
