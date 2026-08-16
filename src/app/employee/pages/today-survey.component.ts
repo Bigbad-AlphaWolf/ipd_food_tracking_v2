@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
+import { DatePickerModule } from 'primeng/datepicker';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { EmployeeService } from '../services/employee.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -12,7 +14,16 @@ import { SurveyVotersByMealComponent } from '../../shared/components/survey-vote
 @Component({
   selector: 'app-today-survey',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, CardModule, PageHeaderComponent, EmptyStateComponent, TodaySurveyVoteCardComponent, SurveyVotersByMealComponent],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    CardModule,
+    DatePickerModule,
+    PageHeaderComponent,
+    EmptyStateComponent,
+    TodaySurveyVoteCardComponent,
+    SurveyVotersByMealComponent
+  ],
   template: `
     <app-page-header
       [eyebrow]="'employee.eyebrow' | translate"
@@ -37,11 +48,22 @@ import { SurveyVotersByMealComponent } from '../../shared/components/survey-vote
         [submitting]="submitting()"
         (voted)="vote($event)"
       ></app-today-survey-vote-card>
-
-      <p-card class="mt-4">
-        <app-survey-voters-by-meal [reportDate]="today"></app-survey-voters-by-meal>
-      </p-card>
     }
+
+    <p-card class="mt-4">
+      <div class="flex flex-column gap-2 mb-4" style="max-width: 18rem;">
+        <label for="voters-date">{{ 'shared.surveyVoters.dateLabel' | translate }}</label>
+        <p-datepicker
+          inputId="voters-date"
+          [ngModel]="votersReportDate()"
+          (ngModelChange)="setVotersReportDate($event)"
+          [showIcon]="true"
+          appendTo="body"
+        ></p-datepicker>
+      </div>
+
+      <app-survey-voters-by-meal [reportDate]="votersReportDate()"></app-survey-voters-by-meal>
+    </p-card>
   `
 })
 export class TodaySurveyComponent {
@@ -54,12 +76,20 @@ export class TodaySurveyComponent {
   readonly survey = signal<DailySurvey | null>(null);
   readonly selectedMealId = signal<string | null>(null);
 
-  /** Stable reference (not recreated per change-detection cycle) for the voters panel's reportDate input. */
-  readonly today = new Date();
+  /** Independent of today's vote card — lets the employee browse any date's voters, same as meal_coordinator. */
+  readonly votersReportDate = signal(new Date());
   private readonly votersPanel = viewChild(SurveyVotersByMealComponent);
 
   constructor() {
     void this.load();
+  }
+
+  setVotersReportDate(value: Date | null): void {
+    if (!value) {
+      return;
+    }
+
+    this.votersReportDate.set(value);
   }
 
   async vote(mealId: string): Promise<void> {

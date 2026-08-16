@@ -507,7 +507,8 @@
     },
     "surveyVoters": {
       "title": "Who's voting for what",
-      "subtitle": "See which meal each of your colleagues picked for this menu.",
+      "subtitle": "See which meal each of your colleagues picked for the selected date.",
+      "dateLabel": "Menu date",
       "emptyMessage": "No menu found for this date.",
       "voterCount": "{{count}} votes",
       "noVotersYet": "No one has voted for this meal yet.",

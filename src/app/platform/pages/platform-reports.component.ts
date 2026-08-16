@@ -27,6 +27,7 @@ import { AppTableColumn, MonthlyReportRow, Organization, SelectOption } from '..
         <div class="col-12">
           <p-select
             [options]="organizationOptions()"
+            appendTo="body"
             optionLabel="label"
             optionValue="value"
             [ngModel]="organizationId()"

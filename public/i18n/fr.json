@@ -507,7 +507,8 @@
     },
     "surveyVoters": {
       "title": "Qui a voté pour quoi",
-      "subtitle": "Découvrez le repas choisi par chacun de vos collègues pour ce menu.",
+      "subtitle": "Découvrez le repas choisi par chacun de vos collègues pour la date sélectionnée.",
+      "dateLabel": "Date du menu",
       "emptyMessage": "Aucun menu trouvé pour cette date.",
       "voterCount": "{{count}} votes",
       "noVotersYet": "Personne n'a encore voté pour ce repas.",
