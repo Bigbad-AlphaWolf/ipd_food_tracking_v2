@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { TableModule } from 'primeng/table';
@@ -14,6 +14,13 @@ import { AdminService } from '../services/admin.service';
 import { ToastService } from '../../core/services/toast.service';
 import { ConfirmDeleteComponent } from '../../shared/components/confirm-delete.component';
 import { DailySurvey, Meal, SelectOption } from '../../core/models/app.models';
+
+/** Sensible default end-of-window so admins aren't forced to compute a time from scratch every time. */
+function endOfToday(): Date {
+  const date = new Date();
+  date.setHours(23, 59, 0, 0);
+  return date;
+}
 
 @Component({
   selector: 'app-surveys-management',
@@ -48,6 +55,7 @@ import { DailySurvey, Meal, SelectOption } from '../../core/models/app.models';
         <tr>
           <th>{{ 'admin.surveys.table.date' | translate }}</th>
           <th>{{ 'admin.surveys.table.status' | translate }}</th>
+          <th>{{ 'admin.surveys.table.window' | translate }}</th>
           <th>{{ 'admin.surveys.table.meals' | translate }}</th>
           <th class="w-12rem">{{ 'admin.surveys.table.actions' | translate }}</th>
         </tr>
@@ -62,6 +70,7 @@ import { DailySurvey, Meal, SelectOption } from '../../core/models/app.models';
               [severity]="survey.status === 'open' ? 'success' : survey.status === 'closed' ? 'danger' : 'warn'"
             ></p-tag>
           </td>
+          <td>{{ survey.voting_starts_at | date: 'short' }} &ndash; {{ survey.voting_ends_at | date: 'short' }}</td>
           <td>{{ mealNames(survey) }}</td>
           <td>
             <div class="flex align-items-center gap-1 flex-wrap">
@@ -92,6 +101,33 @@ import { DailySurvey, Meal, SelectOption } from '../../core/models/app.models';
             <label for="survey-status">{{ 'admin.surveys.dialog.statusLabel' | translate }}</label>
             <p-select inputId="survey-status" [options]="statusOptions()" optionLabel="label" optionValue="value" formControlName="status"></p-select>
           </div>
+          <div class="col-12 md:col-6 flex flex-column gap-2">
+            <label for="survey-voting-starts">{{ 'admin.surveys.dialog.startLabel' | translate }}</label>
+            <p-datepicker
+              inputId="survey-voting-starts"
+              formControlName="votingStartsAt"
+              [showIcon]="true"
+              [showTime]="true"
+              hourFormat="24"
+              appendTo="body"
+            ></p-datepicker>
+          </div>
+          <div class="col-12 md:col-6 flex flex-column gap-2">
+            <label for="survey-voting-ends">{{ 'admin.surveys.dialog.endLabel' | translate }}</label>
+            <p-datepicker
+              inputId="survey-voting-ends"
+              formControlName="votingEndsAt"
+              [showIcon]="true"
+              [showTime]="true"
+              hourFormat="24"
+              appendTo="body"
+            ></p-datepicker>
+          </div>
+          @if (form.hasError('votingWindowInvalid') && form.controls.votingEndsAt.touched) {
+            <div class="col-12">
+              <small class="text-red-500">{{ 'admin.surveys.dialog.votingWindowInvalid' | translate }}</small>
+            </div>
+          }
         </div>
 
         <div class="flex flex-column gap-2">
@@ -137,14 +173,25 @@ export class SurveysManagementComponent {
     ];
   });
 
-  readonly form = this.fb.nonNullable.group({
-    surveyDate: [new Date(), Validators.required],
-    status: ['draft' as DailySurvey['status'], Validators.required],
-    mealIds: [[] as string[], Validators.required]
-  });
+  readonly form = this.fb.nonNullable.group(
+    {
+      surveyDate: [new Date(), Validators.required],
+      status: ['draft' as DailySurvey['status'], Validators.required],
+      votingStartsAt: [new Date(), Validators.required],
+      votingEndsAt: [endOfToday(), Validators.required],
+      mealIds: [[] as string[], Validators.required]
+    },
+    { validators: this.votingWindowValidator }
+  );
 
   constructor() {
     void this.load();
+  }
+
+  private votingWindowValidator(control: AbstractControl): ValidationErrors | null {
+    const start = control.get('votingStartsAt')?.value as Date | null;
+    const end = control.get('votingEndsAt')?.value as Date | null;
+    return start && end && end > start ? null : { votingWindowInvalid: true };
   }
 
   mealOptions(): SelectOption<string>[] {
@@ -160,7 +207,7 @@ export class SurveysManagementComponent {
 
   openCreate(): void {
     this.editingId.set(null);
-    this.form.reset({ surveyDate: new Date(), status: 'draft', mealIds: [] });
+    this.form.reset({ surveyDate: new Date(), status: 'draft', votingStartsAt: new Date(), votingEndsAt: endOfToday(), mealIds: [] });
     this.dialogVisible.set(true);
   }
 
@@ -169,6 +216,8 @@ export class SurveysManagementComponent {
     this.form.reset({
       surveyDate: new Date(survey.survey_date),
       status: survey.status,
+      votingStartsAt: new Date(survey.voting_starts_at),
+      votingEndsAt: new Date(survey.voting_ends_at),
       mealIds: survey.survey_meals?.map((item) => item.meal_id) ?? []
     });
     this.dialogVisible.set(true);
@@ -180,6 +229,8 @@ export class SurveysManagementComponent {
         id: survey.id,
         survey_date: survey.survey_date,
         status,
+        voting_starts_at: survey.voting_starts_at,
+        voting_ends_at: survey.voting_ends_at,
         mealIds: survey.survey_meals?.map((item) => item.meal_id) ?? []
       });
       this.toastService.success(
@@ -210,6 +261,8 @@ export class SurveysManagementComponent {
         id: this.editingId() ?? undefined,
         survey_date: value.surveyDate.toISOString().slice(0, 10),
         status: value.status,
+        voting_starts_at: value.votingStartsAt.toISOString(),
+        voting_ends_at: value.votingEndsAt.toISOString(),
         mealIds: value.mealIds
       });
       this.toastService.success(

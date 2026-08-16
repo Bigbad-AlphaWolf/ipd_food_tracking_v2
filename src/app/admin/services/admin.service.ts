@@ -83,7 +83,9 @@ export class AdminService {
       survey_date: payload.survey_date,
       status: payload.status,
       created_by: user.id,
-      organization_id: organizationId
+      organization_id: organizationId,
+      voting_starts_at: payload.voting_starts_at,
+      voting_ends_at: payload.voting_ends_at
     };
 
     const { data, error } = await this.supabase.from('daily_surveys').upsert(surveyData).select('id').single<{ id: string }>();
