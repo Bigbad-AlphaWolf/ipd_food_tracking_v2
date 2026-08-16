@@ -500,6 +500,17 @@
         "copiedTitle": "Copied",
         "copiedBody": "Copied to clipboard."
       }
+    },
+    "surveyVoters": {
+      "title": "Who's voting for what",
+      "subtitle": "See which meal each of your colleagues picked for this menu.",
+      "emptyMessage": "No menu found for this date.",
+      "voterCount": "{{count}} votes",
+      "noVotersYet": "No one has voted for this meal yet.",
+      "toast": {
+        "unavailableTitle": "Voters unavailable",
+        "unavailableBody": "Unable to load who voted for what."
+      }
     }
   }
 }

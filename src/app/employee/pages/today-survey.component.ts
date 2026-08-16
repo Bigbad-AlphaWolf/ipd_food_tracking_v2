@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
@@ -7,11 +7,12 @@ import { ToastService } from '../../core/services/toast.service';
 import { DailySurvey } from '../../core/models/app.models';
 import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 import { TodaySurveyVoteCardComponent } from '../components/today-survey-vote-card.component';
+import { SurveyVotersByMealComponent } from '../../shared/components/survey-voters-by-meal.component';
 
 @Component({
   selector: 'app-today-survey',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, CardModule, PageHeaderComponent, EmptyStateComponent, TodaySurveyVoteCardComponent],
+  imports: [TranslatePipe, CardModule, PageHeaderComponent, EmptyStateComponent, TodaySurveyVoteCardComponent, SurveyVotersByMealComponent],
   template: `
     <app-page-header
       [eyebrow]="'employee.eyebrow' | translate"
@@ -36,6 +37,10 @@ import { TodaySurveyVoteCardComponent } from '../components/today-survey-vote-ca
         [submitting]="submitting()"
         (voted)="vote($event)"
       ></app-today-survey-vote-card>
+
+      <p-card class="mt-4">
+        <app-survey-voters-by-meal [reportDate]="today"></app-survey-voters-by-meal>
+      </p-card>
     }
   `
 })
@@ -48,6 +53,10 @@ export class TodaySurveyComponent {
   readonly submitting = signal(false);
   readonly survey = signal<DailySurvey | null>(null);
   readonly selectedMealId = signal<string | null>(null);
+
+  /** Stable reference (not recreated per change-detection cycle) for the voters panel's reportDate input. */
+  readonly today = new Date();
+  private readonly votersPanel = viewChild(SurveyVotersByMealComponent);
 
   constructor() {
     void this.load();
@@ -63,6 +72,7 @@ export class TodaySurveyComponent {
     try {
       await this.employeeService.submitVote(this.survey()!.id, mealId);
       this.selectedMealId.set(mealId);
+      this.votersPanel()?.refresh();
       this.toastService.success(
         this.translateService.instant('employee.todaySurvey.toast.votedTitle'),
         this.translateService.instant('employee.todaySurvey.toast.votedBody')

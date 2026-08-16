@@ -154,6 +154,23 @@ export interface MealVoteCount {
   vote_count: number;
 }
 
+/** Raw row from get_survey_voters_by_meal — voter_id/voter_full_name are null when the meal has no votes yet. */
+export interface SurveyVoterRow {
+  survey_id: string;
+  survey_status: SurveyStatus;
+  meal_id: string;
+  meal_name: string;
+  voter_id: string | null;
+  voter_full_name: string | null;
+}
+
+/** Who voted for a given meal, grouped client-side from SurveyVoterRow[]. */
+export interface MealVoterGroup {
+  meal_id: string;
+  meal_name: string;
+  voters: { id: string; full_name: string }[];
+}
+
 /** Provisions a brand-new user (via the admin-create-user edge function) with a temporary password. */
 export interface CreateUserPayload {
   email: string;

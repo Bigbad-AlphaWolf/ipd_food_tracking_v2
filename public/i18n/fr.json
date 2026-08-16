@@ -500,6 +500,17 @@
         "copiedTitle": "Copié",
         "copiedBody": "Copié dans le presse-papiers."
       }
+    },
+    "surveyVoters": {
+      "title": "Qui a voté pour quoi",
+      "subtitle": "Découvrez le repas choisi par chacun de vos collègues pour ce menu.",
+      "emptyMessage": "Aucun menu trouvé pour cette date.",
+      "voterCount": "{{count}} votes",
+      "noVotersYet": "Personne n'a encore voté pour ce repas.",
+      "toast": {
+        "unavailableTitle": "Votants indisponibles",
+        "unavailableBody": "Impossible de charger qui a voté pour quoi."
+      }
     }
   }
 }

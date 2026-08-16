@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { CardModule } from 'primeng/card';
 import { DatePickerModule } from 'primeng/datepicker';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state.component';
+import { SurveyVotersByMealComponent } from '../../shared/components/survey-voters-by-meal.component';
 import { KitchenService } from '../services/kitchen.service';
 import { ToastService } from '../../core/services/toast.service';
 import { MealVoteCount } from '../../core/models/app.models';
@@ -13,7 +15,17 @@ import { MealVoteCount } from '../../core/models/app.models';
 @Component({
   selector: 'app-kitchen-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, TranslatePipe, DatePickerModule, TableModule, TagModule, PageHeaderComponent, EmptyStateComponent],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    CardModule,
+    DatePickerModule,
+    TableModule,
+    TagModule,
+    PageHeaderComponent,
+    EmptyStateComponent,
+    SurveyVotersByMealComponent
+  ],
   template: `
     <app-page-header
       [eyebrow]="'kitchen.eyebrow' | translate"
@@ -74,6 +86,10 @@ import { MealVoteCount } from '../../core/models/app.models';
           </tr>
         </ng-template>
       </p-table>
+
+      <p-card class="mt-4">
+        <app-survey-voters-by-meal [reportDate]="reportDate()"></app-survey-voters-by-meal>
+      </p-card>
     }
   `
 })
