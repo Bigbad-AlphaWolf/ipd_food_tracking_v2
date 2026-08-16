@@ -50,6 +50,9 @@ export interface DailySurvey {
   status: SurveyStatus;
   created_by: string;
   created_at: string;
+  /** Employees can only see/vote on this survey while now() is within [voting_starts_at, voting_ends_at]. */
+  voting_starts_at: string;
+  voting_ends_at: string;
   /** Present when the row is loaded org-scoped (e.g. by a platform administrator across organizations). */
   organization_id?: string;
   organization?: Organization;
@@ -138,6 +141,9 @@ export interface SurveyUpsertPayload {
   survey_date: string;
   status: SurveyStatus;
   mealIds: string[];
+  /** ISO datetimes — employees can only see/vote on this survey while now() is within this window. */
+  voting_starts_at: string;
+  voting_ends_at: string;
 }
 
 /** A platform administrator has no active organization of their own, so they must pick one explicitly. */

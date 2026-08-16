@@ -211,6 +211,7 @@
       "table": {
         "date": "Date",
         "status": "Status",
+        "window": "Voting window",
         "meals": "Meals",
         "actions": "Actions"
       },
@@ -220,6 +221,9 @@
         "header": "Menu",
         "dateLabel": "Menu date",
         "statusLabel": "Status",
+        "startLabel": "Voting starts",
+        "endLabel": "Voting ends",
+        "votingWindowInvalid": "Voting end must be after the start.",
         "mealsLabel": "Meals"
       },
       "toast": {
