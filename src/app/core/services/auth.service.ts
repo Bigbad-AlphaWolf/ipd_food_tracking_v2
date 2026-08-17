@@ -1,11 +1,12 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Session, User } from '@supabase/supabase-js';
+import { AuthApiError, Session, User } from '@supabase/supabase-js';
 import { TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from './supabase.service';
 import { LoadingService } from './loading.service';
 import { ToastService } from './toast.service';
 import { AppRole, Organization, Profile } from '../models/app.models';
+import { RegistrationError } from '../utils/registration-error.util';
 
 interface ProfileRow extends Profile {
   organization_members?: { organization: Organization | null }[] | null;
@@ -77,28 +78,42 @@ export class AuthService {
     fullName: string;
     email: string;
     password: string;
-    organizationCodes: string[];
+    organizationIds: string[];
     phoneNumber?: string;
     department?: string;
   }): Promise<void> {
     this.loadingService.start();
     try {
-      const codes = [...new Set(payload.organizationCodes.map((code) => code.trim()).filter(Boolean))];
+      const organizationIds = [...new Set(payload.organizationIds.filter(Boolean))];
 
-      if (codes.length === 0) {
-        throw new Error('At least one organization code is required.');
+      if (organizationIds.length === 0) {
+        throw new Error('At least one organization is required.');
       }
 
-      const organizationIds = await Promise.all(codes.map((code) => this.resolveOrganizationCode(code)));
-
       const normalizedEmail = payload.email.trim().toLowerCase();
+      const normalizedPhone = payload.phoneNumber?.trim() || null;
+
+      if (normalizedPhone) {
+        const { data: phoneTaken, error: phoneCheckError } = await this.supabase.rpc('is_phone_number_taken', {
+          input_phone: normalizedPhone
+        });
+
+        if (phoneCheckError) {
+          throw phoneCheckError;
+        }
+
+        if (phoneTaken) {
+          throw new RegistrationError('phone_taken');
+        }
+      }
+
       const { data, error } = await this.supabase.auth.signUp({
         email: normalizedEmail,
         password: payload.password,
         options: {
           data: {
             full_name: payload.fullName.trim(),
-            phone_number: payload.phoneNumber?.trim() || null,
+            phone_number: normalizedPhone,
             department: payload.department?.trim() || null,
             role: 'employee',
             roles: ['employee'],
@@ -108,7 +123,14 @@ export class AuthService {
       });
 
       if (error) {
-        throw error;
+        throw this.mapRegistrationError(error);
+      }
+
+      // When email confirmation is on, Supabase silently returns a fake user with
+      // no identities for an already-registered, already-confirmed email instead
+      // of an error, to avoid leaking which emails exist.
+      if (data.user && data.user.identities?.length === 0) {
+        throw new RegistrationError('email_taken');
       }
 
       if (data.session) {
@@ -289,16 +311,35 @@ export class AuthService {
     return merged.length > 0 ? merged : ['employee'];
   }
 
-  private async resolveOrganizationCode(organizationCode: string): Promise<string> {
-    const { data, error } = await this.supabase
-      .rpc('resolve_organization_code', { input_code: organizationCode.trim() })
-      .single<string>();
+  /** Public organization list for the unauthenticated self-registration page's dropdown. */
+  async getRegistrableOrganizations(): Promise<Pick<Organization, 'id' | 'name' | 'code'>[]> {
+    const { data, error } = await this.supabase.rpc('list_active_organizations');
 
-    if (error || !data) {
-      throw error ?? new Error('No active organization found for the supplied code.');
+    if (error) {
+      throw error;
     }
 
-    return data;
+    return data ?? [];
+  }
+
+  /**
+   * GoTrue's own duplicate-email error for signUp() — when it does surface one
+   * instead of the identities-less-user response handled above.
+   */
+  private mapRegistrationError(error: unknown): Error {
+    if (error instanceof AuthApiError && (error.code === 'user_already_exists' || error.message.toLowerCase().includes('already registered'))) {
+      return new RegistrationError('email_taken');
+    }
+
+    // Defensive fallback for the (rare) race where the phone number check above
+    // passes but a concurrent signup wins first: handle_new_user's insert into
+    // profiles then fails the profiles_phone_number_key unique constraint,
+    // which rolls back the whole signUp() transaction with a generic error.
+    if (error instanceof Error && error.message.includes('profiles_phone_number_key')) {
+      return new RegistrationError('phone_taken');
+    }
+
+    return error instanceof Error ? error : new Error('Registration failed.');
   }
 
   private async resolveIdentifier(identifier: string): Promise<string> {

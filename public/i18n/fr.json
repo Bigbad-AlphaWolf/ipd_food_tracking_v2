@@ -125,15 +125,25 @@
       "phonePlaceholder": "+33 6 12 34 56 78",
       "departmentLabel": "Département",
       "departmentPlaceholder": "Opérations",
-      "organizationCodeLabel": "Code(s) d'organisation",
-      "organizationCodePlaceholder": "ex. ACME",
-      "addOrganization": "Ajouter une autre organisation",
-      "removeOrganization": "Retirer l'organisation",
+      "organizationCodeLabel": "Organisation(s)",
+      "organizationCodePlaceholder": "Sélectionnez votre/vos organisation(s)",
       "passwordLabel": "Mot de passe",
       "confirmPasswordLabel": "Confirmer le mot de passe",
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "submit": "Créer un compte employé",
-      "backToLogin": "Retour à la connexion"
+      "backToLogin": "Retour à la connexion",
+      "toast": {
+        "organizationsUnavailableTitle": "Organisations indisponibles",
+        "organizationsUnavailableBody": "Impossible de charger la liste des organisations. Veuillez actualiser la page et réessayer.",
+        "emailTakenTitle": "E-mail déjà utilisé",
+        "emailTakenBody": "Un compte avec cet e-mail existe déjà. Essayez plutôt de vous connecter.",
+        "phoneTakenTitle": "Numéro de téléphone déjà utilisé",
+        "phoneTakenBody": "Un compte avec ce numéro de téléphone existe déjà. Essayez plutôt de vous connecter.",
+        "failureTitle": "Échec de l'inscription",
+        "failureBody": "Impossible de créer votre compte. Veuillez réessayer."
+      },
+      "emailTaken": "Cet e-mail est déjà utilisé.",
+      "phoneTaken": "Ce numéro de téléphone est déjà utilisé."
     },
     "forcePasswordChange": {
       "title": "Définissez un nouveau mot de passe",
