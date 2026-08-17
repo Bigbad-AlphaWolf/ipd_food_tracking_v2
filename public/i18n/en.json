@@ -328,10 +328,9 @@
       "emptyMessage": "There is no open menu for today yet.",
       "noDescription": "No description provided.",
       "selectedTag": "Selected",
-      "chooseMeal": "Choose meal",
       "submitSectionTitle": "Submit your vote",
       "votedNote": "Your vote has been recorded for today.",
-      "notVotedNote": "Once submitted, the vote is locked for the day.",
+      "notVotedNote": "You can change your vote until the voting window closes.",
       "submitVote": "Submit vote",
       "toast": {
         "votedTitle": "Vote recorded",
@@ -339,8 +338,14 @@
         "voteFailedTitle": "Vote failed",
         "voteFailedBody": "Unable to submit your vote. If you already voted, the record remains unchanged.",
         "unavailableTitle": "Menu unavailable",
-        "unavailableBody": "Unable to load today's menu."
-      }
+        "unavailableBody": "Unable to load today's menu.",
+        "voteUpdatedTitle": "Vote updated",
+        "voteUpdatedBody": "Your meal choice has been updated for today."
+      },
+      "changeVote": "Change vote",
+      "cancelEdit": "Cancel",
+      "updateVote": "Update vote",
+      "pickedTag": "Your pick"
     },
     "history": {
       "title": "My History",

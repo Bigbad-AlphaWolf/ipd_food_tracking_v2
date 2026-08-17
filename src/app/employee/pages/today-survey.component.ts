@@ -97,6 +97,8 @@ export class TodaySurveyComponent {
       return;
     }
 
+    const isEdit = !!this.selectedMealId();
+
     this.submitting.set(true);
 
     try {
@@ -104,8 +106,8 @@ export class TodaySurveyComponent {
       this.selectedMealId.set(mealId);
       this.votersPanel()?.refresh();
       this.toastService.success(
-        this.translateService.instant('employee.todaySurvey.toast.votedTitle'),
-        this.translateService.instant('employee.todaySurvey.toast.votedBody')
+        this.translateService.instant(isEdit ? 'employee.todaySurvey.toast.voteUpdatedTitle' : 'employee.todaySurvey.toast.votedTitle'),
+        this.translateService.instant(isEdit ? 'employee.todaySurvey.toast.voteUpdatedBody' : 'employee.todaySurvey.toast.votedBody')
       );
     } catch (error) {
       console.error(error);

@@ -126,6 +126,8 @@ export class EmployeeDashboardComponent {
       return;
     }
 
+    const isEdit = !!this.selectedMealId();
+
     this.voting.set(true);
 
     try {
@@ -136,12 +138,13 @@ export class EmployeeDashboardComponent {
       this.summary.update((summary) => ({
         ...summary,
         hasVotedToday: true,
-        monthVoteCount: summary.monthVoteCount + 1,
+        // Editing an existing vote doesn't add a new history row.
+        monthVoteCount: isEdit ? summary.monthVoteCount : summary.monthVoteCount + 1,
         lastMealName: mealName ?? summary.lastMealName
       }));
       this.toastService.success(
-        this.translateService.instant('employee.todaySurvey.toast.votedTitle'),
-        this.translateService.instant('employee.todaySurvey.toast.votedBody')
+        this.translateService.instant(isEdit ? 'employee.todaySurvey.toast.voteUpdatedTitle' : 'employee.todaySurvey.toast.votedTitle'),
+        this.translateService.instant(isEdit ? 'employee.todaySurvey.toast.voteUpdatedBody' : 'employee.todaySurvey.toast.votedBody')
       );
     } catch (error) {
       console.error(error);

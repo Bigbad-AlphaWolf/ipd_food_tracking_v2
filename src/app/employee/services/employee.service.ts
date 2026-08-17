@@ -42,6 +42,15 @@ export class EmployeeService {
     return { survey, selectedMealId: vote?.meal_id ?? null };
   }
 
+  /**
+   * Casts or edits the caller's vote for a survey — an upsert on the
+   * (survey_id, user_id) unique constraint, so calling this again with a
+   * different mealId changes an existing vote instead of failing. Relies on
+   * both an INSERT and an UPDATE RLS policy on votes (see
+   * 20260817_000004_votes_employee_update_own.sql) since which one applies
+   * depends on whether a vote row already exists; both gate on the survey
+   * still being open and within its voting window.
+   */
   async submitVote(surveyId: string, mealId: string): Promise<void> {
     const userId = this.authService.profile()?.id;
 
@@ -49,11 +58,17 @@ export class EmployeeService {
       throw new Error('You must be signed in to vote.');
     }
 
-    const { error } = await this.supabase.from('votes').insert({
-      survey_id: surveyId,
-      user_id: userId,
-      meal_id: mealId
-    });
+    const { error } = await this.supabase
+      .from('votes')
+      .upsert(
+        {
+          survey_id: surveyId,
+          user_id: userId,
+          meal_id: mealId,
+          voted_at: new Date().toISOString()
+        },
+        { onConflict: 'survey_id,user_id' }
+      );
 
     if (error) {
       throw error;

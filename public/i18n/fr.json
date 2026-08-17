@@ -328,10 +328,9 @@
       "emptyMessage": "Il n'y a pas encore de menu ouvert pour aujourd'hui.",
       "noDescription": "Aucune description fournie.",
       "selectedTag": "Sélectionné",
-      "chooseMeal": "Choisir ce repas",
       "submitSectionTitle": "Soumettre votre vote",
       "votedNote": "Votre vote a été enregistré pour aujourd'hui.",
-      "notVotedNote": "Une fois soumis, le vote est verrouillé pour la journée.",
+      "notVotedNote": "Vous pouvez modifier votre vote jusqu’à la fermeture de la période de vote.",
       "submitVote": "Soumettre le vote",
       "toast": {
         "votedTitle": "Vote enregistré",
@@ -339,8 +338,14 @@
         "voteFailedTitle": "Échec du vote",
         "voteFailedBody": "Impossible de soumettre votre vote. Si vous avez déjà voté, l'enregistrement reste inchangé.",
         "unavailableTitle": "Menu indisponible",
-        "unavailableBody": "Impossible de charger le menu du jour."
-      }
+        "unavailableBody": "Impossible de charger le menu du jour.",
+        "voteUpdatedTitle": "Vote mis à jour",
+        "voteUpdatedBody": "Votre choix de repas a été mis à jour pour aujourd’hui."
+      },
+      "changeVote": "Modifier le vote",
+      "cancelEdit": "Annuler",
+      "updateVote": "Mettre à jour le vote",
+      "pickedTag": "Votre choix"
     },
     "history": {
       "title": "Mon historique",
