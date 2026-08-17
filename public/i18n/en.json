@@ -125,15 +125,25 @@
       "phonePlaceholder": "+1 555 000 1111",
       "departmentLabel": "Department",
       "departmentPlaceholder": "Operations",
-      "organizationCodeLabel": "Organization code(s)",
-      "organizationCodePlaceholder": "e.g. ACME",
-      "addOrganization": "Add another organization",
-      "removeOrganization": "Remove organization",
+      "organizationCodeLabel": "Organization(s)",
+      "organizationCodePlaceholder": "Select your organization(s)",
       "passwordLabel": "Password",
       "confirmPasswordLabel": "Confirm password",
       "passwordMismatch": "Passwords do not match.",
       "submit": "Create employee account",
-      "backToLogin": "Back to login"
+      "backToLogin": "Back to login",
+      "toast": {
+        "organizationsUnavailableTitle": "Organizations unavailable",
+        "organizationsUnavailableBody": "We could not load the list of organizations. Please refresh the page and try again.",
+        "emailTakenTitle": "Email already registered",
+        "emailTakenBody": "An account with this email already exists. Try logging in instead.",
+        "phoneTakenTitle": "Phone number already registered",
+        "phoneTakenBody": "An account with this phone number already exists. Try logging in instead.",
+        "failureTitle": "Registration failed",
+        "failureBody": "We could not create your account. Please try again."
+      },
+      "emailTaken": "This email is already registered.",
+      "phoneTaken": "This phone number is already registered."
     },
     "forcePasswordChange": {
       "title": "Set a new password",

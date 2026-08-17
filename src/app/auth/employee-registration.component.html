@@ -22,47 +22,33 @@
         <div class="col-12 md:col-6 flex flex-column gap-2">
           <label for="email" class="font-medium">{{ 'auth.registration.emailLabel' | translate }}</label>
           <input pInputText id="email" type="email" formControlName="email" [placeholder]="'auth.registration.emailPlaceholder' | translate" />
+          @if (form.controls.email.hasError('emailTaken')) {
+            <small class="text-red-500">{{ 'auth.registration.emailTaken' | translate }}</small>
+          }
         </div>
 
-        <div class="col-12 flex flex-column gap-2" formArrayName="organizationCodes">
-          <label class="font-medium">{{ 'auth.registration.organizationCodeLabel' | translate }}</label>
-          @for (control of organizationCodes.controls; track $index; let i = $index) {
-            <div class="flex align-items-center gap-2">
-              <input
-                pInputText
-                class="flex-1"
-                [formControlName]="i"
-                [placeholder]="'auth.registration.organizationCodePlaceholder' | translate"
-              />
-              @if (organizationCodes.length > 1) {
-                <button
-                  pButton
-                  type="button"
-                  icon="pi pi-trash"
-                  severity="danger"
-                  text
-                  rounded
-                  [attr.aria-label]="'auth.registration.removeOrganization' | translate"
-                  (click)="removeOrganizationCode(i)"
-                ></button>
-              }
-            </div>
-          }
-          <button
-            pButton
-            type="button"
-            [label]="'auth.registration.addOrganization' | translate"
-            icon="pi pi-plus"
-            text
-            size="small"
-            class="align-self-start"
-            (click)="addOrganizationCode()"
-          ></button>
+        <div class="col-12 flex flex-column gap-2">
+          <label for="organizationIds" class="font-medium">{{ 'auth.registration.organizationCodeLabel' | translate }}</label>
+          <p-multiSelect
+            inputId="organizationIds"
+            formControlName="organizationIds"
+            [options]="organizationOptions()"
+            [loading]="loadingOrganizations()"
+            optionLabel="label"
+            optionValue="value"
+            display="chip"
+            [filter]="true"
+            [placeholder]="'auth.registration.organizationCodePlaceholder' | translate"
+            styleClass="w-full"
+          ></p-multiSelect>
         </div>
 
         <div class="col-12 md:col-6 flex flex-column gap-2">
           <label for="phoneNumber" class="font-medium">{{ 'auth.registration.phoneLabel' | translate }}</label>
           <input pInputText id="phoneNumber" formControlName="phoneNumber" [placeholder]="'auth.registration.phonePlaceholder' | translate" />
+          @if (form.controls.phoneNumber.hasError('phoneTaken')) {
+            <small class="text-red-500">{{ 'auth.registration.phoneTaken' | translate }}</small>
+          }
         </div>
 
         <div class="col-12 md:col-6 flex flex-column gap-2">
